@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aperçu : formulaire d'estimation (phase 1)</title>
+<link rel="stylesheet" href="../assets/css/kdv-forms.css">
+<style>body{margin:0;background:#fff}</style>
+</head>
+<body>
+<div class="kdv-app" data-kdv-form="estimation-preview" data-home-url="/">
+
+  <header class="kdv-banner">
+    <a class="kdv-logo" href="/" aria-label="KDV Motors, achat, vente, reprise">
+      <span class="kdv-logo__mark">KD<span>V</span></span>
+      <span class="kdv-logo__tag">ACHAT - VENTE - REPRISE</span>
+    </a>
+    <div class="kdv-banner__side">
+      <p class="kdv-banner__pitch">Confiez-nous votre véhicule, on s'occupe de tout !</p>
+      <ul class="kdv-assurances">
+        <li class="kdv-assurance"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-stopwatch"/></svg><span><strong>Simple</strong>et rapide</span></li>
+        <li class="kdv-assurance"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-euro"/></svg><span><strong>Gratuit</strong>et sans engagement</span></li>
+        <li class="kdv-assurance"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-phone"/></svg><span><strong>Un conseiller</strong>vous recontacte</span></li>
+      </ul>
+    </div>
+  </header>
+
+  <ol class="kdv-stepper" data-kdv-stepper aria-label="Progression de la demande">
+    <li class="kdv-stepper__item"><span class="kdv-stepper__dot"><span class="kdv-stepper__num">1</span></span><span class="kdv-stepper__label">Votre véhicule</span></li>
+    <li class="kdv-stepper__item"><span class="kdv-stepper__dot"><span class="kdv-stepper__num">2</span></span><span class="kdv-stepper__label">État</span></li>
+    <li class="kdv-stepper__item"><span class="kdv-stepper__dot"><span class="kdv-stepper__num">3</span></span><span class="kdv-stepper__label">Options</span></li>
+    <li class="kdv-stepper__item"><span class="kdv-stepper__dot"><span class="kdv-stepper__num">4</span></span><span class="kdv-stepper__label">Votre demande</span></li>
+  </ol>
+
+  <form novalidate>
+
+    <!-- Étape 1 -->
+    <section data-kdv-step aria-labelledby="s1">
+      <h2 class="kdv-step__title" id="s1" data-kdv-heading tabindex="-1">Étape 1 : Parlez-nous de votre véhicule</h2>
+      <p class="kdv-step__subtitle">Renseignez les informations principales de votre véhicule pour obtenir une estimation personnalisée.</p>
+      <div class="kdv-grid">
+        <div class="kdv-field" data-validate="plate">
+          <label class="kdv-label" for="f-plate">Immatriculation <small>(facultatif)</small></label>
+          <div class="kdv-plate"><span class="kdv-plate__band" aria-hidden="true">F</span>
+            <input class="kdv-input" id="f-plate" name="immatriculation" data-format="plate" placeholder="Ex : AB-123-CD" autocomplete="off" maxlength="12"></div>
+        </div>
+        <div class="kdv-field" data-required>
+          <label class="kdv-label" for="f-marque">Marque <span class="kdv-req" aria-hidden="true">*</span></label>
+          <select class="kdv-select" id="f-marque" name="marque"><option value="">Sélectionnez une marque</option><option>BMW</option><option>Peugeot</option><option>Renault</option></select>
+        </div>
+        <div class="kdv-field" data-required>
+          <label class="kdv-label" for="f-modele">Modèle <span class="kdv-req" aria-hidden="true">*</span></label>
+          <select class="kdv-select" id="f-modele" name="modele"><option value="">Sélectionnez un modèle</option><option>Série 3</option><option>308</option></select>
+        </div>
+        <div class="kdv-field">
+          <label class="kdv-label" for="f-finition">Finition / Version <small>(facultatif)</small></label>
+          <input class="kdv-input" id="f-finition" name="finition" list="finitions" placeholder="Ex : GT Line, Allure, Business...">
+          <datalist id="finitions"><option>GT Line</option><option>Allure</option><option>Business</option><option>AMG Line</option><option>M Sport</option></datalist>
+        </div>
+        <div class="kdv-field" data-required>
+          <label class="kdv-label" for="f-annee">Année de mise en circulation <span class="kdv-req" aria-hidden="true">*</span></label>
+          <select class="kdv-select" id="f-annee" name="annee"><option value="">Sélectionnez l'année</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option></select>
+        </div>
+        <div class="kdv-field" data-required data-validate="km">
+          <label class="kdv-label" for="f-km">Kilométrage actuel <span class="kdv-req" aria-hidden="true">*</span></label>
+          <div class="kdv-input-wrap kdv-input-wrap--suffix"><input class="kdv-input" id="f-km" name="kilometrage" inputmode="numeric" data-format="thousands" placeholder="Ex : 50 000"><span class="kdv-suffix" aria-hidden="true">km</span></div>
+        </div>
+        <div class="kdv-field" data-required>
+          <label class="kdv-label" for="f-moto">Motorisation <span class="kdv-req" aria-hidden="true">*</span></label>
+          <select class="kdv-select" id="f-moto" name="motorisation"><option value="">Sélectionnez une motorisation</option><option>Essence</option><option>Diesel</option><option>Hybride</option><option>Électrique</option></select>
+        </div>
+        <div class="kdv-field" data-required>
+          <label class="kdv-label" for="f-boite">Boîte de vitesses <span class="kdv-req" aria-hidden="true">*</span></label>
+          <select class="kdv-select" id="f-boite" name="boite"><option value="">Sélectionnez une boîte</option><option>Manuelle</option><option>Automatique</option></select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Étape 2 -->
+    <section data-kdv-step aria-labelledby="s2" hidden>
+      <h2 class="kdv-step__title" id="s2" data-kdv-heading tabindex="-1">Étape 2 : Quel est l'état de votre véhicule ?</h2>
+      <p class="kdv-step__subtitle">Ces informations nous permettent de mieux évaluer votre véhicule.</p>
+      <div class="kdv-cols">
+        <fieldset class="kdv-field" data-required>
+          <legend>État général du véhicule <span class="kdv-req" aria-hidden="true">*</span></legend>
+          <div class="kdv-choices kdv-choices--2">
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_general" value="excellent"><span class="kdv-choice__box"><span class="kdv-choice__title">Excellent</span><span class="kdv-choice__desc">Véhicule en très bon état, proche du neuf, aucune réparation nécessaire.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_general" value="bon"><span class="kdv-choice__box"><span class="kdv-choice__title">Bon</span><span class="kdv-choice__desc">Véhicule bien entretenu, présentant une usure normale liée à son âge et à son kilométrage.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_general" value="correct"><span class="kdv-choice__box"><span class="kdv-choice__title">Correct</span><span class="kdv-choice__desc">Véhicule présentant des signes d'usure visibles et certaines réparations à prévoir.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_general" value="a_reparer"><span class="kdv-choice__box"><span class="kdv-choice__title">À réparer</span><span class="kdv-choice__desc">Véhicule présentant des dommages ou des réparations importantes à effectuer.</span></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kdv-field" data-required>
+          <legend>État de l'habitacle <span class="kdv-req" aria-hidden="true">*</span></legend>
+          <div class="kdv-choices">
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_habitacle" value="propre"><span class="kdv-choice__box"><span class="kdv-choice__title">Propre</span><span class="kdv-choice__desc">Intérieur bien entretenu, sans défaut notable.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="etat_habitacle" value="use"><span class="kdv-choice__box"><span class="kdv-choice__title">Usé</span><span class="kdv-choice__desc">Intérieur présentant des traces d'usure, des taches ou des dommages visibles.</span></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kdv-field" data-required>
+          <legend>Votre véhicule a-t-il déjà été accidenté ? <span class="kdv-req" aria-hidden="true">*</span></legend>
+          <div class="kdv-choices">
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="accident" value="aucun"><span class="kdv-choice__box"><span class="kdv-choice__title">Aucun</span><span class="kdv-choice__desc">Véhicule jamais accidenté.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="accident" value="mineur"><span class="kdv-choice__box"><span class="kdv-choice__title">Mineur</span><span class="kdv-choice__desc">Accident léger ayant nécessité des réparations sans impact sur la structure du véhicule.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="accident" value="majeur"><span class="kdv-choice__box"><span class="kdv-choice__title">Majeur</span><span class="kdv-choice__desc">Accident important ayant nécessité des réparations structurelles.</span></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="kdv-field" data-required>
+          <legend>Quel est le niveau de suivi d'entretien de votre véhicule ? <span class="kdv-req" aria-hidden="true">*</span></legend>
+          <div class="kdv-choices">
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="suivi_entretien" value="complet"><span class="kdv-choice__box"><span class="kdv-choice__title">Suivi complet</span><span class="kdv-choice__desc">Entretiens réalisés régulièrement, avec factures et/ou carnet d'entretien disponibles.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="suivi_entretien" value="partiel"><span class="kdv-choice__box"><span class="kdv-choice__title">Suivi partiel</span><span class="kdv-choice__desc">Certains entretiens ont été réalisés, mais les justificatifs ou l'historique sont incomplets.</span></span></label>
+            <label class="kdv-choice"><input class="kdv-choice__input" type="radio" name="suivi_entretien" value="aucun"><span class="kdv-choice__box"><span class="kdv-choice__title">Aucun suivi</span><span class="kdv-choice__desc">Aucun historique d'entretien ou justificatif disponible.</span></span></label>
+          </div>
+        </fieldset>
+      </div>
+    </section>
+
+    <!-- Étape 3 -->
+    <section data-kdv-step aria-labelledby="s3" hidden>
+      <h2 class="kdv-step__title" id="s3" data-kdv-heading tabindex="-1">Étape 3 : Quels sont les équipements de votre véhicule ?</h2>
+      <p class="kdv-step__subtitle">Sélectionnez les équipements présents sur votre véhicule. (plusieurs choix possibles)</p>
+      <fieldset class="kdv-field">
+        <legend class="kdv-sr-only">Équipements</legend>
+        <div class="kdv-choices kdv-choices--checks">
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="gps"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-pin"/></svg>GPS intégré</span></label>
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="clim_auto"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-snow"/></svg>Climatisation automatique</span></label>
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="toit_ouvrant"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-sunroof"/></svg>Toit ouvrant / panoramique</span></label>
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="cuir"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-seat"/></svg>Intérieur en cuir</span></label>
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="camera_recul"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-camera"/></svg>Caméra de recul</span></label>
+          <label class="kdv-choice kdv-choice--icon kdv-choice--check"><input class="kdv-choice__input" type="checkbox" name="equipements[]" value="audio_premium"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-speaker"/></svg>Système audio premium</span></label>
+        </div>
+      </fieldset>
+      <div class="kdv-field" data-max="200" style="margin-top:18px">
+        <label class="kdv-label" for="f-autre">Autre équipement <small>(facultatif)</small></label>
+        <input class="kdv-input" id="f-autre" name="autre_equipement" maxlength="200" placeholder="Précisez un autre équipement...">
+      </div>
+    </section>
+
+    <!-- Étape 4 -->
+    <section data-kdv-step aria-labelledby="s4" hidden>
+      <h2 class="kdv-step__title" id="s4" data-kdv-heading tabindex="-1">Étape 4 : Finalisez votre demande d'estimation</h2>
+      <p class="kdv-step__subtitle">Indiquez votre projet de vente et vos coordonnées pour que nous puissions vous recontacter.</p>
+      <fieldset class="kdv-field" data-required>
+        <legend>Quand souhaitez-vous vendre votre véhicule ? <span class="kdv-req" aria-hidden="true">*</span></legend>
+        <div class="kdv-choices kdv-choices--icons">
+          <label class="kdv-choice kdv-choice--icon"><input class="kdv-choice__input" type="radio" name="delai_vente" value="asap"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-bolt"/></svg>Dès que possible</span></label>
+          <label class="kdv-choice kdv-choice--icon"><input class="kdv-choice__input" type="radio" name="delai_vente" value="1_mois"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-calendar"/></svg>Dans le mois</span></label>
+          <label class="kdv-choice kdv-choice--icon"><input class="kdv-choice__input" type="radio" name="delai_vente" value="3_mois"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-calendar"/></svg>Dans les 3 mois</span></label>
+          <label class="kdv-choice kdv-choice--icon"><input class="kdv-choice__input" type="radio" name="delai_vente" value="renseigne"><span class="kdv-choice__box"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-info"/></svg>Je me renseigne simplement</span></label>
+        </div>
+      </fieldset>
+
+      <h3 class="kdv-section-title">Vos coordonnées</h3>
+      <div class="kdv-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <div class="kdv-field" data-required data-min="2" data-max="120">
+          <label class="kdv-label" for="f-nom">Nom et prénom <span class="kdv-req" aria-hidden="true">*</span></label>
+          <input class="kdv-input" id="f-nom" name="nom_complet" autocomplete="name" placeholder="Ex : Dupont Jean">
+        </div>
+        <div class="kdv-field" data-required data-validate="phone" data-foreign="1">
+          <label class="kdv-label" for="f-tel">Téléphone <span class="kdv-req" aria-hidden="true">*</span></label>
+          <div class="kdv-input-wrap"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-phone"/></svg><input class="kdv-input" id="f-tel" name="telephone" type="tel" autocomplete="tel" placeholder="Ex : 06 12 34 56 78"></div>
+        </div>
+        <div class="kdv-field" data-validate="email">
+          <label class="kdv-label" for="f-mail">Email <small>(facultatif)</small></label>
+          <div class="kdv-input-wrap"><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-mail"/></svg><input class="kdv-input" id="f-mail" name="email" type="email" autocomplete="email" placeholder="Ex : votre@email.com"></div>
+        </div>
+      </div>
+
+      <div class="kdv-field" data-required>
+        <label class="kdv-consent"><input type="checkbox" name="consentement" value="1"><span>J'accepte que mes données soient utilisées afin d'être recontacté dans le cadre de ma demande d'estimation.</span></label>
+        <a class="kdv-link" href="#" target="_blank" rel="noopener">Voir la politique de confidentialité</a>
+      </div>
+    </section>
+
+    <div class="kdv-actions">
+      <button type="button" class="kdv-btn kdv-btn--secondary" data-kdv-prev><svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-arrow-left"/></svg>Retour</button>
+      <button type="button" class="kdv-btn kdv-btn--primary" data-kdv-next>Continuer <svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-arrow-right"/></svg></button>
+      <button type="submit" class="kdv-btn kdv-btn--primary" data-kdv-submit hidden>Demander mon estimation gratuite <svg class="kdv-icon" aria-hidden="true"><use href="../assets/img/icons.svg#kdv-i-arrow-right"/></svg></button>
+    </div>
+    <p class="kdv-reassure" data-kdv-reassure hidden>Gratuit et sans engagement. Notre équipe vous recontacte pour échanger sur votre véhicule.</p>
+  </form>
+</div>
+<script src="../assets/js/kdv-form.js"></script>
+<script>
+  // Aperçu uniquement : en phase 2 cette logique sera intégrée au moteur.
+  document.querySelector('[data-kdv-form]').addEventListener('kdv:stepchange', function (e) {
+    var last = e.detail.index === 3;
+    document.querySelector('[data-kdv-next]').hidden = last;
+    document.querySelector('[data-kdv-submit]').hidden = !last;
+    document.querySelector('[data-kdv-reassure]').hidden = !last;
+  });
+  document.querySelector('[data-kdv-form]').addEventListener('kdv:submit', function (e) { e.preventDefault(); alert('Validation OK (aperçu) :\n' + JSON.stringify(e.detail.data, null, 1)); });
+</script>
+</body>
+</html>

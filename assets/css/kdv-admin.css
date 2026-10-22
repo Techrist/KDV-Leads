@@ -1,0 +1,156 @@
+/* KDV Motors : back office "Dossiers KDV". Scoped to .kdv-admin; does not touch the rest of WordPress. */
+
+.kdv-admin {
+  --kdv-red: #D10A11;
+  --kdv-black: #0A0A0A;
+  --kdv-ink: #1d2327;
+  --kdv-grey-50: #F7F7F8;
+  --kdv-grey-100: #EFEFF1;
+  --kdv-grey-200: #E2E2E5;
+  --kdv-grey-500: #6B6B72;
+  --kdv-radius: 12px;
+  --kdv-shadow: 0 1px 2px rgba(10, 10, 10, .05), 0 4px 14px rgba(10, 10, 10, .04);
+  color: var(--kdv-ink);
+  max-width: 1500px;
+}
+.kdv-admin *, .kdv-admin *::before, .kdv-admin *::after { box-sizing: border-box; }
+
+/* ---------- Top bar ---------- */
+.kdv-bar {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  margin: 16px 0 18px; padding: 14px 20px;
+  background: #fff; border-radius: var(--kdv-radius); box-shadow: var(--kdv-shadow);
+  border-left: 5px solid var(--kdv-red);
+}
+.kdv-bar__logo { height: 44px; width: auto; display: block; }
+.kdv-bar__logo--text { font-size: 30px; font-weight: 900; font-style: italic; letter-spacing: -1px; line-height: 44px; }
+.kdv-bar__logo--text b { color: var(--kdv-red); }
+.kdv-bar__title { flex: 1 1 240px; min-width: 0; }
+.kdv-bar__title h1 { margin: 0; padding: 0; font-size: 22px; line-height: 1.2; font-weight: 800; color: var(--kdv-black); }
+.kdv-bar__title p { margin: 2px 0 0; color: var(--kdv-grey-500); }
+.kdv-bar__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Buttons ---------- */
+.kdv-admin .button, .kdv-admin .button-secondary {
+  border-radius: 8px; border-color: var(--kdv-grey-200); color: var(--kdv-ink); background: #fff;
+  min-height: 34px; padding: 0 14px; line-height: 32px; font-weight: 600;
+}
+.kdv-admin .button:hover { border-color: var(--kdv-black); color: var(--kdv-black); background: #fff; }
+.kdv-admin .button-primary, .kdv-admin .button.button-primary {
+  background: var(--kdv-red); border-color: var(--kdv-red); color: #fff;
+}
+.kdv-admin .button-primary:hover, .kdv-admin .button.button-primary:hover { background: #a8080e; border-color: #a8080e; color: #fff; }
+.kdv-admin .button:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--kdv-black); outline: none; }
+.kdv-admin .button-link-delete { color: #b32d2e; border-color: transparent; background: transparent; }
+
+/* ---------- KPI cards ---------- */
+.kdv-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 0 0 18px; }
+.kdv-kpi {
+  display: flex; flex-direction: column; gap: 2px; padding: 16px 18px; text-decoration: none;
+  background: #fff; border-radius: var(--kdv-radius); box-shadow: var(--kdv-shadow); border-top: 4px solid var(--kdv-grey-200);
+  color: var(--kdv-ink); transition: transform .12s, box-shadow .12s;
+}
+.kdv-kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 10, 10, .09); color: var(--kdv-ink); }
+.kdv-kpi:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+.kdv-kpi__value { font-size: 34px; line-height: 1; font-weight: 800; }
+.kdv-kpi__label { color: var(--kdv-grey-500); font-weight: 600; }
+.kdv-kpi--alert { border-top-color: var(--kdv-red); }
+.kdv-kpi--alert .kdv-kpi__value { color: var(--kdv-red); }
+.kdv-kpi--warn { border-top-color: #dba617; }
+
+/* ---------- List: status tabs, filters, table ---------- */
+.kdv-admin .subsubsub { float: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; }
+.kdv-admin .subsubsub li { margin: 0; padding: 0; font-size: 0; }
+.kdv-admin .subsubsub li::after { content: none; }
+.kdv-admin .subsubsub a {
+  display: inline-block; padding: 6px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--kdv-grey-200);
+  color: var(--kdv-ink); font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.kdv-admin .subsubsub a:hover { border-color: var(--kdv-black); }
+.kdv-admin .subsubsub a.current { background: var(--kdv-black); border-color: var(--kdv-black); color: #fff; }
+.kdv-admin .subsubsub .count { opacity: .65; font-weight: 500; }
+
+.kdv-admin .tablenav { height: auto; padding: 4px 0; }
+.kdv-admin .search-box { margin: 0 0 10px; }
+.kdv-admin input[type=search], .kdv-admin input[type=text], .kdv-admin input[type=date], .kdv-admin input[type=datetime-local],
+.kdv-admin select, .kdv-admin textarea, .kdv-admin input[type=email], .kdv-admin input[type=url], .kdv-admin input[type=number], .kdv-admin input[type=password] {
+  border-radius: 8px; border-color: var(--kdv-grey-200); background: #fff;
+}
+.kdv-admin input:focus, .kdv-admin select:focus, .kdv-admin textarea:focus { border-color: var(--kdv-red); box-shadow: 0 0 0 1px var(--kdv-red); }
+
+.kdv-admin .wp-list-table {
+  border: 0; border-radius: var(--kdv-radius); overflow: hidden; box-shadow: var(--kdv-shadow); background: #fff;
+}
+.kdv-admin .wp-list-table thead th, .kdv-admin .wp-list-table tfoot th {
+  background: var(--kdv-grey-50); border-bottom: 1px solid var(--kdv-grey-200); color: var(--kdv-grey-500);
+  font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 12px 10px;
+}
+.kdv-admin .wp-list-table thead th a, .kdv-admin .wp-list-table tfoot th a { color: var(--kdv-grey-500); }
+.kdv-admin .wp-list-table tbody td, .kdv-admin .wp-list-table tbody th { padding: 12px 10px; vertical-align: middle; border-bottom: 1px solid var(--kdv-grey-100); }
+.kdv-admin .wp-list-table.striped > tbody > :nth-child(odd) { background: #fff; }
+.kdv-admin .wp-list-table tbody tr:hover { background: #fff7f7; }
+.kdv-admin .wp-list-table .column-reference strong a { color: var(--kdv-black); font-weight: 800; text-decoration: none; }
+.kdv-admin .wp-list-table .column-reference strong a:hover { color: var(--kdv-red); }
+.kdv-admin .wp-list-table .column-phone a { color: var(--kdv-black); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.kdv-admin .wp-list-table .column-name { font-weight: 600; }
+.kdv-admin .row-actions a { color: var(--kdv-red); }
+.kdv-admin .tablenav-pages .current-page { border-radius: 8px; }
+
+/* Badges */
+.kdv-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1.5; white-space: nowrap; }
+.kdv-badge--asap { background: var(--kdv-red); color: #fff; border: 1px solid var(--kdv-red); }
+.kdv-badge--month { background: #fff; color: var(--kdv-red); border: 1px solid var(--kdv-red); }
+.kdv-badge--low { background: var(--kdv-grey-100); color: #3c434a; border: 1px solid var(--kdv-grey-200); }
+.kdv-badge--status { background: #eef4fb; color: #0a4b78; border: 1px solid #cfe0f1; }
+.kdv-badge--closed { background: var(--kdv-grey-100); color: var(--kdv-grey-500); border-color: var(--kdv-grey-200); }
+.kdv-badge--due { background: #fcf0f1; color: #b32d2e; border: 1px solid #f2c4c6; }
+.kdv-badge--soon { background: #f6f7f7; color: var(--kdv-ink); border: 1px solid var(--kdv-grey-200); }
+
+.kdv-admin .column-reference { width: 160px; }
+.kdv-admin .column-km { width: 90px; }
+.kdv-admin .column-delai { width: 170px; }
+
+/* ---------- Lead page ---------- */
+.kdv-lead {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin: 0 0 18px; padding: 18px 22px;
+  background: #fff; border-radius: var(--kdv-radius); box-shadow: var(--kdv-shadow);
+}
+.kdv-lead__avatar {
+  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--kdv-black); color: #fff; font-size: 22px; font-weight: 800;
+}
+.kdv-lead__main { flex: 1 1 260px; min-width: 0; }
+.kdv-lead__name { margin: 0; font-size: 22px; font-weight: 800; color: var(--kdv-black); }
+.kdv-lead__meta { margin: 4px 0 0; color: var(--kdv-grey-500); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.kdv-lead__contact { display: flex; gap: 8px; flex-wrap: wrap; }
+.kdv-lead__call {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 10px;
+  background: var(--kdv-red); color: #fff; font-size: 17px; font-weight: 800; text-decoration: none;
+}
+.kdv-lead__call:hover { background: #a8080e; color: #fff; }
+.kdv-lead__call:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+
+.kdv-admin .postbox { border: 0; border-radius: var(--kdv-radius); box-shadow: var(--kdv-shadow); }
+.kdv-admin .postbox .postbox-header { border-bottom: 1px solid var(--kdv-grey-100); border-radius: var(--kdv-radius) var(--kdv-radius) 0 0; }
+.kdv-admin .postbox .hndle { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; padding: 14px 18px; color: var(--kdv-black); }
+.kdv-admin .postbox .inside { padding: 0 18px 14px; margin: 0; }
+.kdv-admin .postbox .form-table th { width: 34%; padding: 10px 10px 10px 0; color: var(--kdv-grey-500); font-weight: 600; }
+.kdv-admin .postbox .form-table td { padding: 10px 0; }
+.kdv-admin .postbox .form-table tr { border-bottom: 1px solid var(--kdv-grey-100); }
+.kdv-admin .postbox .form-table tr:last-child { border-bottom: 0; }
+
+.kdv-timeline { margin: 0; padding: 0; list-style: none; border-left: 2px solid var(--kdv-grey-200); }
+.kdv-timeline li { position: relative; margin: 0; padding: 0 0 12px 18px; }
+.kdv-timeline li::before { content: ""; position: absolute; left: -6px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--kdv-red); border: 2px solid #fff; }
+.kdv-timeline time { display: block; color: var(--kdv-grey-500); font-size: 12px; }
+
+/* ---------- Settings / diagnostic ---------- */
+.kdv-admin .form-table th { font-weight: 600; }
+.kdv-admin .widefat { border: 0; border-radius: var(--kdv-radius); overflow: hidden; box-shadow: var(--kdv-shadow); }
+.kdv-admin h2:not(.hndle) { margin-top: 26px; font-size: 16px; font-weight: 800; }
+
+@media (max-width: 782px) {
+  .kdv-bar { padding: 12px 14px; }
+  .kdv-bar__logo { height: 36px; }
+  .kdv-kpi__value { font-size: 28px; }
+}

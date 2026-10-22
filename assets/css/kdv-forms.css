@@ -1,0 +1,420 @@
+/* KDV Motors : design system des formulaires (fond blanc, accent rouge). Tout est préfixé .kdv- */
+
+.kdv-app {
+  --kdv-red: #D10A11;
+  --kdv-red-dark: #A8080E;
+  --kdv-red-soft: #FDF1F1;
+  --kdv-black: #0A0A0A;
+  --kdv-white: #FFFFFF;
+  --kdv-grey-50: #F7F7F8;
+  --kdv-grey-200: #E2E2E5;
+  --kdv-grey-300: #C9C9CE;
+  --kdv-grey-500: #6B6B72;
+  --kdv-radius: 8px;
+  --kdv-gutter: 16px;
+
+  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--kdv-gutter) 48px;
+  background: var(--kdv-white);
+  color: var(--kdv-black);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+}
+.kdv-app *, .kdv-app *::before, .kdv-app *::after { box-sizing: border-box; }
+.kdv-app [hidden] { display: none !important; }
+
+.kdv-sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Bandeau supérieur ---------- */
+.kdv-banner {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 20px 0 16px;
+}
+.kdv-logo { display: inline-flex; flex-direction: column; line-height: 1; text-decoration: none; color: var(--kdv-black); }
+.kdv-logo img { display: block; max-height: 56px; width: auto; }
+.kdv-logo__mark { font-size: 44px; font-weight: 900; letter-spacing: -2px; font-style: italic; }
+.kdv-logo__mark span { color: var(--kdv-red); }
+.kdv-logo__tag { font-size: 10px; font-weight: 700; letter-spacing: .5px; margin-top: 4px; }
+.kdv-banner__pitch { font-weight: 700; margin: 0 0 8px; }
+.kdv-assurances { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
+.kdv-assurance { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.2; color: var(--kdv-grey-500); }
+.kdv-assurance strong { display: block; color: var(--kdv-black); font-size: 13px; }
+.kdv-assurance .kdv-icon { width: 28px; height: 28px; color: var(--kdv-red); flex: none; }
+
+/* ---------- Icônes ---------- */
+.kdv-icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ---------- Stepper ---------- */
+.kdv-stepper { display: grid; grid-template-columns: repeat(4, 1fr); margin: 8px 0 28px; padding: 0; list-style: none; }
+.kdv-stepper__item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 13px; color: var(--kdv-grey-500); }
+.kdv-stepper__item::before {
+  content: ""; position: absolute; top: 17px; right: 50%; width: 100%; height: 2px;
+  background: var(--kdv-grey-200); z-index: 0;
+}
+.kdv-stepper__item:first-child::before { display: none; }
+.kdv-stepper__dot {
+  position: relative; z-index: 1; display: grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--kdv-grey-200); color: var(--kdv-grey-500); font-weight: 700;
+}
+.kdv-stepper__item.is-current, .kdv-stepper__item.is-done { color: var(--kdv-black); }
+.kdv-stepper__item.is-current { color: var(--kdv-red); font-weight: 700; }
+.kdv-stepper__item.is-current::before, .kdv-stepper__item.is-done::before { background: var(--kdv-red); }
+.kdv-stepper__item.is-current .kdv-stepper__dot,
+.kdv-stepper__item.is-done .kdv-stepper__dot { background: var(--kdv-red); color: var(--kdv-white); }
+.kdv-stepper__item.is-done .kdv-stepper__num { display: none; }
+.kdv-stepper__item.is-done .kdv-stepper__dot::after { content: "\2713"; font-size: 18px; }
+.kdv-stepper__label { max-width: 100%; }
+
+/* ---------- Étapes ---------- */
+.kdv-step__title { margin: 0 0 6px; font-size: 24px; line-height: 1.2; font-weight: 800; }
+.kdv-step__title:focus { outline: none; }
+.kdv-step__title:focus-visible { outline: 2px solid var(--kdv-red); outline-offset: 4px; }
+.kdv-step__subtitle { margin: 0 0 24px; color: var(--kdv-grey-500); }
+
+.kdv-grid { display: grid; grid-template-columns: 1fr; gap: 18px 24px; }
+.kdv-section-title { margin: 28px 0 12px; font-size: 18px; font-weight: 700; }
+
+/* ---------- Champs ---------- */
+.kdv-field { border: 0; margin: 0; padding: 0; min-width: 0; }
+.kdv-label, .kdv-field > legend { display: block; padding: 0; margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.kdv-label small, .kdv-field > legend small { font-weight: 400; color: var(--kdv-grey-500); }
+.kdv-req { color: var(--kdv-red); }
+
+.kdv-input, .kdv-select {
+  display: block; width: 100%; height: 48px; padding: 0 14px;
+  border: 1px solid var(--kdv-grey-200); border-radius: var(--kdv-radius);
+  background: var(--kdv-grey-50); color: var(--kdv-black); font: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.kdv-input::placeholder { color: var(--kdv-grey-500); opacity: 1; }
+.kdv-select {
+  appearance: none; -webkit-appearance: none; padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B6B72' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.kdv-select:disabled { opacity: .55; cursor: not-allowed; }
+.kdv-input:hover, .kdv-select:hover { border-color: var(--kdv-grey-300); }
+.kdv-input:focus-visible, .kdv-select:focus-visible {
+  outline: none; border-color: var(--kdv-red); background-color: var(--kdv-white);
+  box-shadow: 0 0 0 3px rgba(209, 10, 17, .18);
+}
+.has-error > .kdv-input, .has-error > .kdv-select, .has-error .kdv-input-wrap > .kdv-input, .has-error .kdv-plate { border-color: var(--kdv-red); }
+
+.kdv-input-wrap { position: relative; display: block; }
+.kdv-input-wrap > .kdv-input { padding-left: 44px; }
+.kdv-input-wrap > .kdv-icon { position: absolute; left: 14px; top: 50%; width: 20px; height: 20px; margin-top: -10px; color: var(--kdv-grey-500); pointer-events: none; }
+.kdv-input-wrap--suffix > .kdv-input { padding-left: 14px; padding-right: 48px; }
+.kdv-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--kdv-grey-500); font-size: 14px; pointer-events: none; }
+
+/* Plaque française */
+.kdv-plate { display: flex; height: 48px; border: 1px solid var(--kdv-grey-200); border-radius: var(--kdv-radius); background: var(--kdv-grey-50); overflow: hidden; }
+.kdv-plate:focus-within { border-color: var(--kdv-red); background: var(--kdv-white); box-shadow: 0 0 0 3px rgba(209, 10, 17, .18); }
+.kdv-plate__band { display: grid; place-items: center; width: 36px; background: #1B3FA0; color: #fff; font-size: 12px; font-weight: 700; flex: none; }
+.kdv-plate .kdv-input { border: 0; background: transparent; border-radius: 0; box-shadow: none; text-transform: uppercase; letter-spacing: 1px; height: 100%; }
+.kdv-plate .kdv-input:focus-visible { box-shadow: none; background: transparent; }
+
+.kdv-error { margin: 6px 0 0; color: var(--kdv-red); font-size: 13px; font-weight: 600; }
+
+/* ---------- Cartes radio / case à cocher (vrais inputs) ---------- */
+.kdv-choices { display: grid; gap: 10px; grid-template-columns: 1fr; }
+.kdv-choice { position: relative; display: block; cursor: pointer; }
+.kdv-choice__input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+.kdv-choice__box {
+  position: relative; display: block; height: 100%; padding: 12px 14px 12px 44px;
+  border: 1px solid var(--kdv-grey-200); border-radius: var(--kdv-radius); background: var(--kdv-white);
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+.kdv-choice:hover .kdv-choice__box { border-color: var(--kdv-grey-300); }
+.kdv-choice__box::before {
+  content: ""; position: absolute; left: 14px; top: 14px; width: 20px; height: 20px;
+  border: 2px solid var(--kdv-grey-300); border-radius: 50%; background: var(--kdv-white);
+}
+.kdv-choice__title { display: block; font-weight: 700; }
+.kdv-choice__desc { display: block; margin-top: 2px; font-size: 13px; color: var(--kdv-grey-500); }
+
+.kdv-choice__input:checked + .kdv-choice__box { border-color: var(--kdv-red); background: var(--kdv-red-soft); }
+.kdv-choice__input:checked + .kdv-choice__box::before { border-color: var(--kdv-red); box-shadow: inset 0 0 0 4px var(--kdv-white); background: var(--kdv-red); }
+.kdv-choice__input:focus-visible + .kdv-choice__box { outline: 3px solid rgba(209, 10, 17, .35); outline-offset: 2px; }
+
+/* Variante icône (délai de vente, équipements) */
+.kdv-choice--icon .kdv-choice__box {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  min-height: 92px; padding: 14px 10px; text-align: center; font-weight: 600; font-size: 14px;
+}
+.kdv-choice--icon .kdv-choice__box::before { display: none; }
+.kdv-choice--icon .kdv-icon { width: 28px; height: 28px; }
+.kdv-choice--icon .kdv-choice__input:checked + .kdv-choice__box .kdv-icon { color: var(--kdv-red); }
+
+/* Case à cocher carrée en haut à droite (équipements) */
+.kdv-choice--check .kdv-choice__box::after {
+  content: ""; position: absolute; top: 10px; right: 10px; width: 20px; height: 20px;
+  border: 2px solid var(--kdv-grey-300); border-radius: 4px; background: var(--kdv-white);
+}
+.kdv-choice--check .kdv-choice__input:checked + .kdv-choice__box::after {
+  border-color: var(--kdv-red); background-color: var(--kdv-red);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E");
+  background-size: 14px; background-position: center; background-repeat: no-repeat;
+}
+
+/* Disposition des cartes */
+.kdv-choices--2 { grid-template-columns: 1fr; }
+@media (min-width: 480px) { .kdv-choices--2 { grid-template-columns: repeat(2, 1fr); } }
+.kdv-choices--icons { grid-template-columns: repeat(2, 1fr); }
+.kdv-choices--checks { grid-template-columns: repeat(2, 1fr); }
+.kdv-cols { display: grid; grid-template-columns: 1fr; gap: 24px; }
+
+/* Consentement */
+.kdv-consent { display: flex; gap: 10px; align-items: flex-start; margin: 20px 0 0; font-size: 14px; }
+.kdv-consent input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--kdv-red); flex: none; }
+.kdv-consent input:focus-visible { outline: 3px solid rgba(209, 10, 17, .35); outline-offset: 2px; }
+.kdv-link { color: var(--kdv-black); text-decoration: underline; font-size: 13px; }
+.kdv-link:hover { color: var(--kdv-red); }
+
+/* Honeypot : hors écran, jamais display:none */
+.kdv-hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Boutons ---------- */
+.kdv-actions {
+  display: flex; gap: 12px; align-items: stretch; margin-top: 28px;
+  position: sticky; bottom: 0; z-index: 5; padding: 12px 0;
+  background: linear-gradient(to top, #fff 80%, rgba(255, 255, 255, 0));
+}
+.kdv-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 22px; border-radius: var(--kdv-radius);
+  border: 1px solid transparent; font: inherit; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .4px; text-decoration: none; cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+.kdv-btn .kdv-icon { width: 18px; height: 18px; stroke-width: 2.4; }
+.kdv-btn--primary { flex: 1; background: var(--kdv-red); color: var(--kdv-white); }
+.kdv-btn--primary:hover { background: var(--kdv-red-dark); }
+.kdv-btn--secondary { background: var(--kdv-white); color: var(--kdv-black); border-color: var(--kdv-grey-300); text-transform: none; letter-spacing: 0; }
+.kdv-btn--secondary:hover { border-color: var(--kdv-black); }
+.kdv-btn:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+.kdv-btn[disabled], .kdv-btn[aria-disabled="true"] { opacity: .65; cursor: progress; }
+.kdv-reassure { margin: 4px 0 0; text-align: center; font-size: 12px; color: var(--kdv-grey-500); }
+
+.kdv-alert { margin: 16px 0 0; padding: 12px 14px; border-radius: var(--kdv-radius); border: 1px solid var(--kdv-red); background: var(--kdv-red-soft); font-weight: 600; }
+
+/* ---------- Tablette / desktop ---------- */
+@media (min-width: 768px) {
+  .kdv-app { --kdv-gutter: 24px; }
+  .kdv-banner { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+  .kdv-banner__side { text-align: right; }
+  .kdv-assurances { justify-content: flex-end; }
+  .kdv-step__title { font-size: 28px; }
+  .kdv-grid { grid-template-columns: 1fr 1fr; }
+  .kdv-cols { grid-template-columns: 1fr 1fr; align-items: start; }
+  .kdv-choices--icons { grid-template-columns: repeat(4, 1fr); }
+  .kdv-choices--checks { grid-template-columns: repeat(3, 1fr); }
+  .kdv-actions { position: static; background: none; padding: 0; }
+  .kdv-actions .kdv-btn--secondary { min-width: 140px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kdv-app * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+/* ---------- Compléments ---------- */
+.kdv-field--spaced { margin-top: 18px; }
+.kdv-grid--3 { grid-template-columns: 1fr; }
+@media (min-width: 768px) { .kdv-grid--3 { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- FAQ ---------- */
+.kdv-faq { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--kdv-grey-200); }
+.kdv-faq__title { margin: 0 0 16px; font-size: 22px; font-weight: 800; }
+.kdv-faq__item { border-bottom: 1px solid var(--kdv-grey-200); }
+.kdv-faq__q {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 16px 0; cursor: pointer; font-weight: 700; list-style: none;
+}
+.kdv-faq__q::-webkit-details-marker { display: none; }
+.kdv-faq__q:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+.kdv-faq__icon { position: relative; width: 20px; height: 20px; flex: none; color: var(--kdv-red); }
+.kdv-faq__icon::before, .kdv-faq__icon::after { content: ""; position: absolute; left: 3px; right: 3px; top: 9px; height: 2px; background: currentColor; }
+.kdv-faq__icon::after { transform: rotate(90deg); transition: transform .15s; }
+.kdv-faq__item[open] .kdv-faq__icon::after { transform: rotate(0); }
+.kdv-faq__a { padding: 0 36px 16px 0; color: var(--kdv-grey-500); }
+.kdv-faq__a p { margin: 0; }
+
+
+/* ---------- Parcours recherche ---------- */
+.kdv-hero { padding: 40px var(--kdv-gutter) 8px; text-align: center; }
+.kdv-hero__title { margin: 0 0 10px; font-size: 30px; line-height: 1.15; font-weight: 800; }
+.kdv-hero__text { max-width: 620px; margin: 0 auto 22px; color: var(--kdv-grey-500); font-size: 17px; }
+.kdv-hero__cta { display: inline-flex; flex: none; }
+@media (min-width: 768px) { .kdv-hero__title { font-size: 40px; } }
+
+.kdv-textarea { height: auto; min-height: 96px; padding: 12px 14px; resize: vertical; line-height: 1.45; }
+.kdv-btn--small { min-height: 40px; padding: 0 16px; font-size: 14px; }
+
+/* Cartes "étiquette" (carburant, carrosserie, boîte…) */
+.kdv-choices--tags { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.kdv-choice--tag .kdv-choice__box { padding: 11px 14px; min-height: 46px; display: flex; align-items: center; }
+.kdv-choice--tag .kdv-choice__box::before { display: none; }
+.kdv-choice--tag.kdv-choice--check .kdv-choice__box { padding-right: 42px; }
+.kdv-choice--tag .kdv-choice__title { font-weight: 600; }
+.kdv-choice--tag:not(.kdv-choice--check) .kdv-choice__input:checked + .kdv-choice__box .kdv-choice__title { color: var(--kdv-red); }
+
+/* Puces */
+.kdv-chips__list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; padding: 0; list-style: none; }
+.kdv-chips__list:empty { display: none; }
+.kdv-chips__add { display: flex; gap: 8px; }
+.kdv-chips__add .kdv-input { flex: 1; }
+.kdv-chips__suggest { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.kdv-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; border-radius: 999px;
+  border: 1px solid var(--kdv-red); background: var(--kdv-red-soft); font-size: 14px; font-weight: 600;
+}
+.kdv-chip button { display: grid; place-items: center; width: 22px; height: 22px; border: 0; border-radius: 50%; background: var(--kdv-red); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; padding: 0; }
+.kdv-chip button:focus-visible, .kdv-chip--suggest:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+.kdv-chip--suggest { padding: 6px 12px; border: 1px solid var(--kdv-grey-300); background: #fff; color: var(--kdv-black); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.kdv-chip--suggest:hover { border-color: var(--kdv-black); }
+.kdv-chip--suggest.is-on { border-color: var(--kdv-red); background: var(--kdv-red-soft); color: var(--kdv-red); font-weight: 700; }
+
+/* Photos */
+.kdv-upload__drop { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.kdv-upload__btn { cursor: pointer; text-transform: none; }
+.kdv-upload__drop input:focus-visible + .kdv-upload__btn { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+.kdv-upload__hint { color: var(--kdv-grey-500); font-size: 13px; }
+.kdv-upload__list { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.kdv-upload__item { display: flex; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--kdv-grey-200); border-radius: var(--kdv-radius); }
+.kdv-upload__item.is-error { border-color: var(--kdv-red); background: var(--kdv-red-soft); }
+.kdv-upload__item img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; background: var(--kdv-grey-50); flex: none; }
+.kdv-upload__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; font-size: 13px; }
+.kdv-upload__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kdv-upload__status { color: var(--kdv-grey-500); }
+.kdv-upload__item.is-error .kdv-upload__status { color: var(--kdv-red); font-weight: 600; }
+.kdv-upload__info progress { width: 100%; height: 6px; accent-color: var(--kdv-red); }
+.kdv-upload__remove { width: 36px; height: 36px; border: 1px solid var(--kdv-grey-300); border-radius: 50%; background: #fff; font-size: 20px; line-height: 1; cursor: pointer; flex: none; }
+.kdv-upload__remove:hover { border-color: var(--kdv-red); color: var(--kdv-red); }
+.kdv-upload__remove:focus-visible { outline: 3px solid var(--kdv-black); outline-offset: 2px; }
+
+/* ---------- Logo et visuels KDV (photos détourées, fond transparent) ---------- */
+.kdv-logo img { height: 52px; width: auto; max-width: 100%; }
+
+/* Hero du parcours recherche : voiture détourée à droite */
+.kdv-hero { position: relative; isolation: isolate; overflow: hidden; }
+.kdv-hero::after {
+  content: ""; position: absolute; z-index: -1; right: -2%; bottom: 0; width: 40%; height: 100%;
+  background: var(--kdv-ill-m5) right bottom / contain no-repeat; opacity: .9;
+}
+@media (max-width: 899px) { .kdv-hero::after { display: none; } }
+
+/* Illustrations d'étape (estimation) : décoratives, ordinateur uniquement */
+.kdv-ill { display: none; }
+@media (min-width: 1100px) {
+  [data-kdv-step] { position: relative; overflow-x: clip; }
+  [data-kdv-step] > *:not(.kdv-ill) { position: relative; z-index: 1; }
+  .kdv-ill { display: block; position: absolute; z-index: 0; pointer-events: none; background-repeat: no-repeat; background-size: contain; }
+
+  /* Étape 1 : voiture sur un faisceau rouge, à gauche des champs */
+  /* Voiture coupée en deux : seule la moitié avant est visible, agrandie, sortant par la gauche.
+     La photo fait 150 % de la largeur du cadre et reste calée à droite ; l'arrière est fondu dans le blanc. */
+  .kdv-ill--suv {
+    left: 0; bottom: -70px; width: 46%; height: 500px;
+    background:
+      var(--kdv-ill-suv) right bottom / 150% auto no-repeat,
+      radial-gradient(ellipse 52% 46% at 52% 56%, rgba(209, 10, 17, .24) 0%, rgba(209, 10, 17, .10) 45%, rgba(209, 10, 17, 0) 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%); mask-image: linear-gradient(to right, transparent 0%, #000 26%);
+  }
+  .kdv-app[data-kdv-form="estimation"][data-step="1"] .kdv-grid { margin-left: 46%; }
+  /* Étape 3 : volant coupé, il sort par la droite ; noir et blanc estompé.
+     Seule la partie gauche de la photo est visible (140 % de la largeur du cadre, calée à gauche). */
+  .kdv-ill--wheel {
+    right: 0; bottom: 0; width: 40%; height: 400px;
+    background: var(--kdv-ill-wheel) left bottom / 140% auto no-repeat;
+    filter: grayscale(1); opacity: .55;
+    /* Côté droit (la coupe) fondu dans le blanc ; léger fondu à gauche et en bas pour éviter tout bord net */
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, #000 34%), linear-gradient(to right, transparent 0%, #000 14%), linear-gradient(to top, transparent 0%, #000 20%), linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .3) 20%, #000 50%);
+    -webkit-mask-composite: source-in, source-in, source-in;
+    mask-image: linear-gradient(to left, transparent 0%, #000 34%), linear-gradient(to right, transparent 0%, #000 14%), linear-gradient(to top, transparent 0%, #000 20%), linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .3) 20%, #000 50%);
+    mask-composite: intersect;
+  }
+  .kdv-app[data-kdv-form="estimation"][data-step="3"] .kdv-choices--checks,
+  .kdv-app[data-kdv-form="estimation"][data-step="3"] .kdv-field--spaced { max-width: 64%; }
+
+}
+
+/* Boutons rouges plus courts sur ordinateur : retour à gauche, action principale à droite */
+@media (min-width: 768px) {
+  .kdv-actions { justify-content: space-between; }
+  .kdv-actions .kdv-btn--primary { flex: 0 0 auto; min-width: 240px; padding: 0 28px; }
+  .kdv-btn--car { gap: 12px; }
+}
+.kdv-btn__img { display: block; width: 34px; height: auto; flex: none; }
+
+/* ---------- Page de confirmation ---------- */
+.kdv-thanks { padding-top: 12px; padding-bottom: 64px; }
+.kdv-thanks__top { padding: 20px 0 8px; }
+.kdv-thanks__grid { display: grid; grid-template-columns: 1fr; gap: 8px; align-items: center; }
+.kdv-thanks__main { position: relative; z-index: 1; max-width: 640px; }
+
+.kdv-thanks__badge { display: inline-grid; place-items: center; width: 84px; height: 84px; margin: 12px 0 18px; border-radius: 50%; background: var(--kdv-red-soft); box-shadow: 0 0 0 10px rgba(209, 10, 17, .06); }
+.kdv-thanks__badge svg { display: block; }
+.kdv-thanks__ring { stroke: var(--kdv-red); stroke-width: 3; stroke-dasharray: 145; stroke-dashoffset: 0; }
+.kdv-thanks__tick { stroke: var(--kdv-red); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 0; }
+
+.kdv-thanks__title { margin: 0 0 12px; font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -.3px; }
+.kdv-thanks__title:focus { outline: none; }
+.kdv-thanks__lead { margin: 0 0 14px; font-size: 17px; color: #3c3c42; }
+.kdv-thanks__ref { display: inline-block; margin: 0 0 8px; padding: 6px 14px; border-radius: 14px; background: var(--kdv-grey-50); border: 1px solid var(--kdv-grey-200); font-size: 14px; color: var(--kdv-grey-500); }
+.kdv-thanks__ref strong { color: var(--kdv-black); letter-spacing: .3px; }
+.kdv-thanks__subtitle { margin: 28px 0 14px; font-size: 18px; font-weight: 800; }
+
+/* Prochaines étapes */
+.kdv-next { position: relative; margin: 0; padding: 0; list-style: none; }
+.kdv-next::before { content: ""; position: absolute; left: 17px; top: 18px; bottom: 18px; width: 2px; background: var(--kdv-grey-200); }
+.kdv-next__item { position: relative; display: flex; gap: 16px; align-items: flex-start; padding: 0 0 20px; }
+.kdv-next__item:last-child { padding-bottom: 0; }
+.kdv-next__dot { position: relative; z-index: 1; display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 2px solid var(--kdv-grey-300); color: var(--kdv-grey-500); font-weight: 700; }
+.kdv-next__item.is-done .kdv-next__dot { background: var(--kdv-red); border-color: var(--kdv-red); color: #fff; }
+.kdv-next__text { display: flex; flex-direction: column; padding-top: 4px; }
+.kdv-next__text strong { font-size: 16px; }
+.kdv-next__text span { color: var(--kdv-grey-500); font-size: 14.5px; }
+
+.kdv-thanks__actions { margin-top: 32px; }
+.kdv-btn--wide { min-width: 220px; }
+
+/* Visuel (ordinateur) */
+.kdv-thanks__art { display: none; }
+@media (min-width: 900px) {
+  .kdv-thanks { padding-top: 24px; }
+  .kdv-thanks__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 24px; min-height: 520px; }
+  .kdv-thanks__title { font-size: 38px; }
+  .kdv-thanks__art {
+    display: block; align-self: stretch; min-height: 420px; position: relative; pointer-events: none;
+  }
+  .kdv-thanks__art::before {
+    content: ""; position: absolute; inset: 6% -8% 0 -4%;
+    background: radial-gradient(ellipse 52% 50% at 50% 52%, rgba(209, 10, 17, .22) 0%, rgba(209, 10, 17, .09) 45%, rgba(209, 10, 17, 0) 100%);
+  }
+  .kdv-thanks__art::after { content: ""; position: absolute; inset: 0; background-repeat: no-repeat; background-position: center; background-size: contain; }
+  .kdv-thanks__art--suv::after { background-image: var(--kdv-ill-suv); }
+  .kdv-thanks__art--m5::after { background-image: var(--kdv-ill-m5); }
+}
+
+/* Animations sobres (désactivées si mouvement réduit) */
+@media (prefers-reduced-motion: no-preference) {
+  .kdv-thanks__badge { animation: kdv-pop .5s cubic-bezier(.2, .9, .3, 1.3) both; }
+  .kdv-thanks__ring { animation: kdv-draw .7s ease-out .1s both; --len: 145; }
+  .kdv-thanks__tick { animation: kdv-draw .45s ease-out .55s both; --len: 40; }
+  .kdv-thanks__main > *:not(.kdv-thanks__badge) { animation: kdv-rise .5s ease-out both; }
+  .kdv-thanks__title { animation-delay: .15s; }
+  .kdv-thanks__lead { animation-delay: .22s; }
+  .kdv-next { animation: kdv-rise .5s ease-out .32s both; }
+  .kdv-thanks__actions { animation-delay: .42s; }
+  .kdv-thanks__art { animation: kdv-fade .8s ease-out .2s both; }
+}
+@keyframes kdv-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes kdv-pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes kdv-rise { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes kdv-fade { from { opacity: 0; } to { opacity: 1; } }
