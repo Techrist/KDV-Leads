@@ -408,7 +408,6 @@
   function setupSubmit(root, cfg) {
     var form = $('form', root);
     var name = root.getAttribute('data-kdv-form');
-    var started = Date.now();
     var source = captureSource();
     var submitBtn = $('[data-kdv-submit]', root);
     var label = $('[data-kdv-submit-label]', root);
@@ -445,7 +444,7 @@
         try { data[n] = JSON.parse(data[n] || '[]'); } catch (err) { data[n] = []; }
       });
       data.submission_key = submissionKey();
-      data.elapsed_ms = Date.now() - started;
+      data.form_token = cfg.formToken || '';   // jeton signé par le serveur (durée de remplissage vérifiée côté serveur)
       data.source = source;
       data.consent_version = cfg.consentVersion || '';
       if (cfg.extra) { cfg.extra(data); }

@@ -12,6 +12,8 @@ final class Plugin
             Database\Schema::install();
         }
 
+        Security\Secrets::migrate(Config::OPTION);
+
         // Gestionnaires land on "Dossiers KDV" after login (§12.1).
         add_filter('login_redirect', static function ($to, $requested, $user) {
             if ($user instanceof \WP_User && in_array(Config::ROLE, (array) $user->roles, true)) {
@@ -22,6 +24,7 @@ final class Plugin
 
         Frontend\Shortcodes::init();
         Http\RestController::init();
+        Http\SecurityHeaders::init();
         Http\UploadController::init();
         Pdf\PdfGenerator::init();
         Mail\Mailer::init();

@@ -61,22 +61,33 @@ final class MessageBuilder
             . '</td></tr></table>';
     }
 
+    /**
+     * Free text from the form, made safe to place in an e-mail subject: letters, digits, spaces and a few
+     * punctuation marks only (no brackets, no emoji, no look-alike "[URGENT]" tags), capped in length.
+     */
+    public static function safe_subject_text(string $s, int $max = 40): string
+    {
+        $s = (string) preg_replace('/[^\p{L}\p{N}\s\'’\.\-\+\/]/u', '', $s);
+        $s = trim((string) preg_replace('/\s+/u', ' ', $s));
+        return mb_substr($s, 0, $max);
+    }
+
     public static function admin_subject(array $lead): string
     {
         $d = self::payload($lead);
         if (($lead['type'] ?? '') === 'recherche') {
-            $first = (string) ($d['marques_modeles'][0] ?? 'Véhicule');
+            $first = self::safe_subject_text((string) ($d['marques_modeles'][0] ?? 'Véhicule')) ?: 'Véhicule';
             $more = count((array) ($d['marques_modeles'] ?? [])) > 1 ? ' (+' . (count($d['marques_modeles']) - 1) . ')' : '';
             $budget = number_format((int) ($lead['budget_max'] ?? 0), 0, ',', ' ');
-            return self::one_line('[KDV RECHERCHE] ' . $first . $more . ' | Budget ' . $budget . ' € | ' . $lead['full_name']);
+            return self::one_line('[KDV RECHERCHE] ' . $first . $more . ' | Budget ' . $budget . ' € | ' . self::safe_subject_text((string) $lead['full_name']));
         }
         $prefix = ($lead['sale_timeframe'] === 'asap' && Config::get('subject_priority_prefix')) ? '🔴 ' : '';
         $parts = [
-            trim(($d['marque'] ?? '') . ' ' . ($d['modele'] ?? '')),
+            self::safe_subject_text(trim(($d['marque'] ?? '') . ' ' . ($d['modele'] ?? '')), 50),
             (string) ($lead['vehicle_year'] ?? ''),
             self::km(isset($lead['mileage']) ? (int) $lead['mileage'] : null) . ' km',
             self::delai_label($lead['sale_timeframe'] ?? null),
-            (string) $lead['full_name'],
+            self::safe_subject_text((string) $lead['full_name']),
         ];
         return self::one_line($prefix . '[KDV ESTIMATION] ' . implode(' | ', $parts));
     }
@@ -321,16 +332,15 @@ final class MessageBuilder
         $d = self::payload($lead);
         $rows = [];
         if (($lead['type'] ?? '') === 'recherche') {
-            if (!empty($d['marques_modeles'])) {
-                $rows['Véhicule recherché'] = implode(', ', (array) $d['marques_modeles']);
-            }
+            // Free-text entries are deliberately NOT echoed: the recipient may not be the person who filled the form.
             if (!empty($d['budget_max'])) {
                 $rows['Budget maximum'] = number_format((int) $d['budget_max'], 0, ',', ' ') . ' €';
             }
         } else {
-            $vehicle = trim(($d['marque'] ?? '') . ' ' . ($d['modele'] ?? '') . ' ' . ($d['finition'] ?? ''));
-            if ($vehicle !== '') {
-                $rows['Véhicule'] = $vehicle;
+            // Brand and model only when both come from our catalogue ("Autre" and the free-text trim are never echoed).
+            $catalogue = O::vehicles();
+            if (isset($catalogue[$d['marque'] ?? '']) && in_array($d['modele'] ?? '', $catalogue[$d['marque']], true)) {
+                $rows['Véhicule'] = $d['marque'] . ' ' . $d['modele'];
             }
             if (!empty($lead['vehicle_year'])) {
                 $rows['Mise en circulation'] = (string) $lead['vehicle_year'];
@@ -368,7 +378,7 @@ final class MessageBuilder
         foreach (self::client_steps($lead) as $i => [$label, $text]) {
             $t .= ($i + 1) . '. ' . $label . ' : ' . $text . "\n";
         }
-        $t .= "\nUne question ? Répondez simplement à cet e-mail.\n\nL'équipe KDV MOTORS\nAchat, vente, reprise\n";
+        $t .= "\nUne question ? Répondez simplement à cet e-mail.\nVous n'êtes pas à l'origine de cette demande ? Ignorez simplement ce message.\n\nL'équipe KDV MOTORS\nAchat, vente, reprise\n";
         $t .= "\nGratuit et sans engagement. Vous recevez ce message car vous avez fait une demande sur " . wp_parse_url(home_url(), PHP_URL_HOST) . ".\n";
         return $t;
     }
@@ -424,6 +434,7 @@ final class MessageBuilder
         $h .= '</table>';
 
         $h .= '<p style="margin:0 0 6px;font-size:15px;line-height:1.55;">Une question ? Répondez simplement à cet e-mail.</p>';
+        $h .= '<p style="margin:0 0 14px;font-size:13px;line-height:1.5;color:#6B6B72;">Vous n\'êtes pas à l\'origine de cette demande ? Ignorez simplement ce message.</p>';
         $h .= '<p style="margin:0 0 10px;font-size:15px;line-height:1.55;font-weight:bold;">L\'équipe KDV MOTORS</p>';
         $h .= '<img src="' . esc_url(self::logo_url()) . '" alt="KDV MOTORS" width="120" height="46" style="display:block;width:120px;height:auto;margin:0 0 24px;border:0;outline:none;font:900 18px Arial,Helvetica,sans-serif;font-style:italic;color:#0A0A0A;">';
         $h .= '</td></tr>';

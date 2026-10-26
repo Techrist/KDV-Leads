@@ -31,7 +31,7 @@ if (!preg_match('/^\s*\*\s*Version:\s*([0-9][0-9A-Za-z.\-]*)/m', $main, $m)) {
 }
 $version = $m[1];
 
-$include = ['kdv-leads.php', 'uninstall.php', 'composer.json', 'composer.lock', 'README.md', 'includes', 'assets', 'vendor'];
+$include = ['kdv-leads.php', 'uninstall.php', 'composer.json', 'composer.lock', 'README.md', '.htaccess', 'includes', 'assets', 'vendor'];
 $skip_font = static function (string $rel): bool {
     // Keep only the DejaVu family (and its licence note) from mPDF's font folder.
     if (strpos($rel, 'vendor/mpdf/mpdf/ttfonts/') !== 0) {

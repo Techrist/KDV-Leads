@@ -41,8 +41,8 @@
 .kdv-logo__mark { font-size: 44px; font-weight: 900; letter-spacing: -2px; font-style: italic; }
 .kdv-logo__mark span { color: var(--kdv-red); }
 .kdv-logo__tag { font-size: 10px; font-weight: 700; letter-spacing: .5px; margin-top: 4px; }
-.kdv-banner__pitch { font-weight: 700; margin: 0 0 8px; }
-.kdv-assurances { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
+.kdv-banner__pitch { font-weight: 700; margin: 0 0 8px; text-align: center; }
+.kdv-assurances { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
 .kdv-assurance { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.2; color: var(--kdv-grey-500); }
 .kdv-assurance strong { display: block; color: var(--kdv-black); font-size: 13px; }
 .kdv-assurance .kdv-icon { width: 28px; height: 28px; color: var(--kdv-red); flex: none; }
@@ -207,9 +207,10 @@
 /* ---------- Tablette / desktop ---------- */
 @media (min-width: 768px) {
   .kdv-app { --kdv-gutter: 24px; }
-  .kdv-banner { flex-direction: row; justify-content: space-between; align-items: flex-start; }
-  .kdv-banner__side { text-align: right; }
-  .kdv-assurances { justify-content: flex-end; }
+  .kdv-banner { flex-direction: row; justify-content: center; align-items: center; }
+  .kdv-banner__side { text-align: center; }
+  .kdv-assurance { text-align: left; }
+  .kdv-assurances { justify-content: center; }
   .kdv-step__title { font-size: 28px; }
   .kdv-grid { grid-template-columns: 1fr 1fr; }
   .kdv-cols { grid-template-columns: 1fr 1fr; align-items: start; }
@@ -348,6 +349,7 @@
 @media (min-width: 768px) {
   .kdv-actions { justify-content: space-between; }
   .kdv-actions .kdv-btn--primary { flex: 0 0 auto; min-width: 240px; padding: 0 28px; }
+  .kdv-actions .kdv-btn[data-kdv-submit] { flex: 1 1 auto; }
   .kdv-btn--car { gap: 12px; }
 }
 .kdv-btn__img { display: block; width: 34px; height: auto; flex: none; }

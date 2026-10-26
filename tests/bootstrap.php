@@ -72,3 +72,18 @@ if (!function_exists('remove_accents')) {
             'É' => 'E', 'È' => 'E', 'À' => 'A', 'Ç' => 'C']);
     }
 }
+
+if (!defined('MB_IN_BYTES')) { define('MB_IN_BYTES', 1048576); }
+if (!defined('HOUR_IN_SECONDS')) { define('HOUR_IN_SECONDS', 3600); }
+if (!function_exists('wp_salt')) {
+    function wp_salt($scheme = 'auth') { return 'unit-test-salt-' . $scheme; }
+}
+if (!function_exists('wp_convert_hr_to_bytes')) {
+    function wp_convert_hr_to_bytes($v) {
+        $v = strtolower(trim((string) $v)); $n = (int) $v;
+        return match (substr($v, -1)) { 'g' => $n * 1073741824, 'm' => $n * 1048576, 'k' => $n * 1024, default => $n };
+    }
+}
+if (!function_exists('wp_parse_url')) {
+    function wp_parse_url($u) { return parse_url($u); }
+}

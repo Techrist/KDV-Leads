@@ -95,6 +95,7 @@
     nonce: CFG.nonce,
     thanksUrl: CFG.thanksUrl,
     consentVersion: CFG.consentVersion,
+    formToken: CFG.formToken,
     jsonFields: ['marques_modeles', 'options_indispensables', 'options_souhaitables'],
     beforeSubmit: function () {
       var up = window.KdvUploader && window.KdvUploader.first();

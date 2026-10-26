@@ -1,0 +1,18 @@
+# KDV Leads : fichiers de travail jamais servis par le web.
+Options -Indexes
+<IfModule mod_authz_core.c>
+    <FilesMatch "^(composer\.(json|lock)|phpunit\.xml|README\.md|\.gitignore|\.gitattributes|\.phpunit\.result\.cache)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    <FilesMatch "^(composer\.(json|lock)|phpunit\.xml|README\.md|\.gitignore|\.gitattributes|\.phpunit\.result\.cache)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
+# Dépôt Git et dossiers de développement (absents du zip de livraison).
+<IfModule mod_alias.c>
+    RedirectMatch 403 /\.git(/|$)
+    RedirectMatch 403 /kdv-leads/(bin|dist|docs|tests|\.phpunit\.cache)(/|$)
+</IfModule>

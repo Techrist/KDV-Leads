@@ -83,14 +83,21 @@ Les PDF et photos ne sont **jamais servis directement** : seul l'administration 
 - Rôle **Gestionnaire KDV** : voit et traite les dossiers (liste, fiche, export CSV), pas les Réglages ni le Diagnostic. À la connexion il arrive sur « Dossiers KDV ».
   Les **administrateurs** ont en plus les Réglages, le Diagnostic et l'anonymisation d'un dossier.
 - **Double authentification obligatoire** pour administrateurs et gestionnaires : installer **Wordfence Login Security** ou **WP 2FA**, activer l'exigence 2FA pour ces rôles, remettre les codes de secours à chaque utilisateur.
-- Anti-spam : champ piège, délai minimal de remplissage (8 s), limite d'envois par IP (5/heure), **Cloudflare Turnstile** activable (clés dans Réglages).
-  Derrière un proxy/CDN, vérifier que l'IP vue par PHP est bien celle du visiteur, sinon la limite par IP s'applique à tous.
+- Anti-spam : champ piège, **jeton de formulaire signé par le serveur** (délai minimal de remplissage 8 s mesuré côté serveur, 24 h de validité), compteurs atomiques
+  (envois 5/heure/IP, tentatives 60/heure/IP, photos par session et par IP), accusé de réception limité à 2 par adresse et par jour (Réglages),
+  **Cloudflare Turnstile** fortement recommandé en production (clés dans Réglages).
+  Réglage **« Adresse IP du visiteur »** : « Directe » par défaut ; choisir « Cloudflare » ou « En-tête transmis » derrière un CDN/proxy, puis contrôler la page Diagnostic
+  (ligne « Adresse IP vue par le serveur »), sinon la limite par IP s'applique à tous les visiteurs.
+- Protections de fichiers : `.htaccess` (Apache 2.4 et 2.2) à la racine du plugin, dans `includes/`, `vendor/` et dans le stockage privé. Sur nginx/LiteSpeed ils sont sans effet :
+  définir `KDV_STORAGE_PATH` hors de la racine web et bloquer `vendor/`, `includes/` côté serveur.
+- Les clés secrètes (Turnstile, immatriculation) sont chiffrées en base. En-têtes de sécurité (anti-iframe, nosniff, referrer) envoyés sur les seules pages KDV.
+- Audit complet et contre-attaque : `docs/AUDIT-SECURITE.md`, suite rejouable : `tests/security/README.md`.
 - Les e-mails peuvent contenir des données personnelles : l'accès à la boîte de réception KDV doit être protégé.
 
 ## 7. RGPD
 
 - Case de consentement au recontact obligatoire, texte versionné (Réglages → version du texte). Consentement marketing : désactivé par défaut (option).
-- **Conservation** : 36 mois après la dernière activité (Réglages), puis anonymisation automatique ; les e-mails envoyés sont purgés de la file après 90 jours.
+- **Conservation** : 36 mois après la dernière activité (Réglages), puis anonymisation automatique ; les e-mails envoyés sont purgés de la file après 30 jours (même si la conservation des dossiers est à 0).
 - **Accès / effacement** : outils WordPress *Outils → Exporter / Effacer les données personnelles* (recherche par e-mail) ; pour une demande **par téléphone**,
   utiliser la fiche du dossier : *Exporter les données (JSON)* et *Anonymiser ce dossier* (administrateur).
 - L'anonymisation efface nom, téléphone, e-mail, notes, PDF, photos et copies d'e-mails ; elle garde la référence, le véhicule et les dates pour les statistiques.
@@ -132,7 +139,7 @@ La recherche par immatriculation est **préparée mais inactive** : `GET /wp-jso
 
 ```bash
 composer install            # avec les outils de test
-vendor/bin/phpunit          # 31 tests unitaires (sans WordPress)
+vendor/bin/phpunit          # 43 tests unitaires (sans WordPress)
 php tests/integration/recette.php /chemin/wp-load.php http://localhost/site   # recette automatisée dans un vrai WordPress
 php bin/build-release.php   # produit dist/kdv-leads-<version>.zip (vendor sans dev, polices mPDF réduites)
 ```

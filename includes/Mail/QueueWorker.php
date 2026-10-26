@@ -103,7 +103,7 @@ final class QueueWorker
             return;
         }
         echo '<div class="notice notice-error"><p><strong>KDV : problème d\'envoi d\'e-mail.</strong> '
-            . esc_html($alert['message']) . ' (' . esc_html(wp_date('d/m/Y H:i', (int) $alert['time'])) . ') '
+            . esc_html(current_user_can(\KdvLeads\Config::CAP_SETTINGS) ? $alert['message'] : 'Un e-mail n\'a pas pu partir. Prévenez l\'administrateur du site.') . ' (' . esc_html(wp_date('d/m/Y H:i', (int) $alert['time'])) . ') '
             . '<a href="' . esc_url(admin_url('admin.php?page=kdv-diagnostic')) . '">Diagnostic</a></p></div>';
     }
 }

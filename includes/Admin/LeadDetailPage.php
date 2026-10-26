@@ -167,7 +167,7 @@ final class LeadDetailPage
         foreach ($mails as $m) {
             $state = ['sent' => '✅ envoyé ' . self::fmt($m['sent_at']), 'pending' => '⏳ en attente', 'failed' => '⚠️ échec, nouvelle tentative ' . self::fmt($m['next_attempt_at']), 'abandoned' => '❌ abandonné'][$m['status']] ?? $m['status'];
             echo '<p><strong>' . esc_html($kinds[$m['kind']] ?? $m['kind']) . '</strong> → ' . esc_html($m['to_email']) . '<br>' . esc_html($state);
-            if ($m['last_error'] && $m['status'] !== 'sent') {
+            if ($m['last_error'] && $m['status'] !== 'sent' && current_user_can(\KdvLeads\Config::CAP_SETTINGS)) {
                 echo '<br><span class="description">' . esc_html($m['last_error']) . '</span>';
             }
             echo '<br>' . self::post_form('resend', $id, 'kdv_resend_', get_submit_button('Renvoyer', 'small', 'submit', false), ['queue' => (int) $m['id']]) . '</p>';

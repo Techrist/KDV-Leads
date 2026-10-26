@@ -15,6 +15,7 @@ final class Validator
      */
     public static function estimation(array $in): array
     {
+        $in = self::normalise($in);
         $errors = [];
         $c = [];
         $text = static fn ($k, $max = 255) => mb_substr(trim(sanitize_text_field((string) ($in[$k] ?? ''))), 0, $max);
@@ -140,6 +141,76 @@ final class Validator
         return [$errors, $c];
     }
 
+    /** Fields that legitimately hold a list of strings. */
+    private const LIST_KEYS = ['equipements', 'marques_modeles', 'options_indispensables', 'options_souhaitables', 'carburant', 'carrosserie', 'origine_acceptee', 'liens_annonces'];
+    private const MULTILINE_KEYS = ['commentaire'];
+
+    /**
+     * First line of defence for every incoming payload:
+     *  - a scalar field that arrives as an array/object/null becomes '' (no more "Array" names or PHP warnings);
+     *  - list fields keep only scalar entries (and at most 50);
+     *  - invisible/control characters are removed (RTL override U+202E, zero-width spaces, NUL…), so a name
+     *    cannot be displayed in a misleading way; line breaks survive only in multi-line fields;
+     *  - every string is capped, so a multi-megabyte value is never handed to the sanitisers.
+     */
+    public static function normalise(array $in): array
+    {
+        $out = [];
+        foreach ($in as $k => $v) {
+            if (!is_string($k)) {
+                continue;
+            }
+            if (in_array($k, self::LIST_KEYS, true)) {
+                $items = [];
+                foreach (is_array($v) ? array_slice($v, 0, 50) : [] as $x) {
+                    if (is_scalar($x)) {
+                        $items[] = self::clean((string) $x, false);
+                    }
+                }
+                $out[$k] = $items;
+            } elseif ($k === 'photos') {
+                $out[$k] = is_array($v) ? array_slice($v, 0, 10) : [];
+            } elseif ($k === 'source') {
+                $out[$k] = is_array($v) ? $v : [];
+            } else {
+                $out[$k] = is_scalar($v) ? self::clean((string) $v, in_array($k, self::MULTILINE_KEYS, true)) : '';
+            }
+        }
+        return $out;
+    }
+
+    /** Remove control and format characters (Unicode category C); keep "\n" when $multiline. Capped at 5000 characters. */
+    public static function clean(string $s, bool $multiline): string
+    {
+        $s = mb_substr($s, 0, 5000);
+        if ($multiline) {
+            $s = str_replace("\r\n", "\n", $s);
+            $s = preg_replace('/(?!\n)\p{C}/u', '', $s);
+        } else {
+            $s = preg_replace('/\p{C}/u', '', $s);
+        }
+        return $s ?? '';   // null = invalid UTF-8: treat as empty
+    }
+
+    /**
+     * Ad links are only stored and printed, never fetched, so no DNS lookup is made (wp_http_validate_url() resolves
+     * the host: slow, and it lets a visitor make the server query hosts of their choosing).
+     * Accepts http(s) with a plain ASCII host, and refuses "user:pass@host" addresses (classic phishing trick:
+     * https://bank.example@evil.example/ opens evil.example).
+     */
+    public static function is_safe_link(string $url): bool
+    {
+        $p = wp_parse_url($url);
+        if (!is_array($p) || !in_array($p['scheme'] ?? '', ['http', 'https'], true)) {
+            return false;
+        }
+        if (isset($p['user']) || isset($p['pass'])) {
+            return false;
+        }
+        $host = (string) ($p['host'] ?? '');
+        return $host !== '' && strlen($host) <= 253 && (bool) preg_match('/^(?=.{1,253}$)([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z0-9-]{2,63}$/', $host);
+    }
+
     /** Clean a list of free-text entries (chips). */
     private static function text_list($raw, int $max_items, int $max_len): array
     {
@@ -173,6 +244,7 @@ final class Validator
      */
     public static function recherche(array $in): array
     {
+        $in = self::normalise($in);
         $errors = [];
         $c = [];
         $text = static fn ($k, $max = 255) => mb_substr(trim(sanitize_text_field((string) ($in[$k] ?? ''))), 0, $max);
@@ -239,7 +311,7 @@ final class Validator
                 continue;
             }
             $url = esc_url_raw($l, ['http', 'https']);
-            if ($url === '' || strlen($url) > 300 || !wp_http_validate_url($url)) {
+            if ($url === '' || strlen($url) > 300 || !self::is_safe_link($url)) {
                 $err('liens_annonces', 'Chaque lien doit commencer par http:// ou https://.');
                 continue;
             }
@@ -331,7 +403,7 @@ final class Validator
         $s = is_array($in['source'] ?? null) ? $in['source'] : [];
         $out = [];
         foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'referrer', 'landing'] as $k) {
-            $out[$k] = mb_substr(sanitize_text_field((string) ($s[$k] ?? '')), 0, 255);
+            $out[$k] = is_scalar($s[$k] ?? null) ? mb_substr(sanitize_text_field(self::clean((string) $s[$k], false)), 0, 255) : '';
         }
         $out['gclid'] = empty($s['gclid']) ? 0 : 1;
         $out['fbclid'] = empty($s['fbclid']) ? 0 : 1;

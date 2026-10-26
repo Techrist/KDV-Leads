@@ -38,7 +38,7 @@ final class Shortcodes
         }));
     }
 
-    private static function page_has_shortcode(string ...$tags): bool
+    public static function page_has_shortcode(string ...$tags): bool
     {
         $post = get_post();
         if (!$post instanceof \WP_Post) {
@@ -57,7 +57,7 @@ final class Shortcodes
         if (!is_singular() || !self::page_has_shortcode(...self::TAGS)) {
             return;
         }
-        $ver = KDV_LEADS_VERSION;
+        $ver = KDV_LEADS_VERSION . "." . (int) @filemtime(KDV_LEADS_DIR . "assets/css/kdv-forms.css");
         $red = (string) Config::get('brand_red');
         wp_enqueue_style('kdv-forms', KDV_LEADS_URL . 'assets/css/kdv-forms.css', [], $ver);
         if (preg_match('/^#[0-9A-Fa-f]{6}$/', $red)) {
@@ -67,6 +67,9 @@ final class Shortcodes
         if (self::page_has_shortcode('kdv_estimation_merci', 'kdv_recherche_merci')) {
             wp_enqueue_script('kdv-thanks', KDV_LEADS_URL . 'assets/js/kdv-thanks.js', [], $ver, true);
         }
+
+        // The page title (rendered by the theme) is centred above the centred form.
+        wp_add_inline_style('kdv-forms', 'body.page .wp-block-post-title,body.page .entry-title,body.page h1.page-title{text-align:center}');
 
         wp_add_inline_style(
             'kdv-forms',
@@ -92,6 +95,7 @@ final class Shortcodes
             'nonce'          => wp_create_nonce('wp_rest'),
             'homeUrl'        => esc_url_raw(home_url('/')),
             'consentVersion' => (string) Config::get('consent_text_version'),
+            'formToken'      => \KdvLeads\Http\FormToken::issue(),
         ];
         if ($is_estimation) {
             wp_enqueue_script('kdv-estimation', KDV_LEADS_URL . 'assets/js/kdv-estimation.js', ['kdv-form'], $ver, true);

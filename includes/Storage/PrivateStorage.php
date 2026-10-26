@@ -45,7 +45,7 @@ final class PrivateStorage
             return false;
         }
         if (!file_exists($dir . '/.htaccess')) {
-            @file_put_contents($dir . '/.htaccess', "Require all denied\nDeny from all\n");
+            @file_put_contents($dir . '/.htaccess', "<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n    Order allow,deny\n    Deny from all\n</IfModule>\nOptions -Indexes\n");
         }
         if (!file_exists($dir . '/index.php')) {
             @file_put_contents($dir . '/index.php', "<?php // Silence is golden.\n");

@@ -2,6 +2,7 @@
 namespace KdvLeads\Http;
 
 use KdvLeads\Config;
+use KdvLeads\Database\Counters;
 use KdvLeads\Database\FileRepository;
 use KdvLeads\Database\LeadRepository;
 use KdvLeads\Database\ReferenceGenerator;
@@ -48,12 +49,9 @@ final class RestController
             return self::fail(422, 'Format d\'immatriculation invalide.');
         }
         // Every lookup costs money: strict per-IP limit.
-        $key = 'kdv_plate_' . substr(AntiSpam::ip_hash(), 0, 24);
-        $n = (int) get_transient($key);
-        if ($n >= 10) {
+        if (Counters::hit(Counters::hourly('pl', AntiSpam::client_ip())) > 10) {
             return self::fail(429, 'Trop de recherches. Saisissez les informations manuellement.');
         }
-        set_transient($key, $n + 1, HOUR_IN_SECONDS);
 
         try {
             $data = $lookup->lookup($plate);
@@ -77,6 +75,10 @@ final class RestController
     {
         if (!wp_verify_nonce((string) $req->get_header('X-WP-Nonce'), 'wp_rest')) {
             return self::fail(403, 'Votre session a expiré. Rechargez la page : vos informations sont conservées.');
+        }
+        // Cheap, atomic, before any database lookup: stops hammering whether the payload is valid or not.
+        if (AntiSpam::attempts_exceeded()) {
+            return self::fail(429, 'Trop de requêtes depuis votre connexion. Réessayez dans quelques minutes.');
         }
         $in = $req->get_json_params();
         if (!is_array($in)) {

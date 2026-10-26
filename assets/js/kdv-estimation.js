@@ -83,6 +83,7 @@
     nonce: CFG.nonce,
     thanksUrl: CFG.thanksUrl,
     consentVersion: CFG.consentVersion,
+    formToken: CFG.formToken,
     extra: function (data) { if (!data.equipements) { data.equipements = []; } }
   });
 })();

@@ -64,24 +64,9 @@ if (is_readable($icons_file)) {
     echo '<div hidden>' . file_get_contents($icons_file) . '</div>'; // static plugin file, inline sprite
 }
 ?>
-<section class="kdv-app kdv-hero" aria-labelledby="kdv-hero-title">
-  <h1 class="kdv-hero__title" id="kdv-hero-title">Vous recherchez un véhicule précis ?</h1>
-  <p class="kdv-hero__text">Décrivez vos critères. KDV Motors étudie votre projet et vous recontacte pour une recherche personnalisée.</p>
-  <a class="kdv-btn kdv-btn--primary kdv-hero__cta" href="#kdv-recherche-form" data-kdv-scroll>Décrire ma recherche <?php echo O::icon('arrow-right'); ?></a>
-</section>
-
 <div class="kdv-app" id="kdv-recherche-form" data-kdv-form="recherche" data-home-url="<?php echo esc_url(home_url('/')); ?>">
 
   <header class="kdv-banner">
-    <a class="kdv-logo" href="<?php echo esc_url(home_url('/')); ?>">
-      <?php if (is_readable($logo_file)) : ?>
-        <img src="<?php echo esc_url(KDV_LEADS_URL . 'assets/img/logo-kdv.png'); ?>" alt="KDV Motors, achat, vente, reprise">
-      <?php else : ?>
-        <span class="kdv-logo__mark" aria-hidden="true">KD<span>V</span></span>
-        <span class="kdv-logo__tag">ACHAT - VENTE - REPRISE</span>
-        <span class="kdv-sr-only">KDV Motors</span>
-      <?php endif; ?>
-    </a>
     <div class="kdv-banner__side">
       <ul class="kdv-assurances">
         <li class="kdv-assurance"><?php echo O::icon('stopwatch'); ?><span><strong>Simple</strong>et rapide</span></li>

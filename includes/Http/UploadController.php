@@ -2,6 +2,7 @@
 namespace KdvLeads\Http;
 
 use KdvLeads\Config;
+use KdvLeads\Database\Counters;
 use KdvLeads\Database\FileRepository;
 use KdvLeads\Storage\ImageProcessor;
 
@@ -40,24 +41,18 @@ final class UploadController
         return (bool) wp_verify_nonce((string) $req->get_header('X-WP-Nonce'), 'wp_rest');
     }
 
-    /** Light per-IP throttle shared by session creation and uploads. */
+    /** Per-IP hourly throttle, atomic. Buckets: 'session' (new upload sessions) and 'file' (photos). */
     private static function throttled(string $bucket, int $limit): bool
     {
-        $key = 'kdv_up_' . $bucket . '_' . substr(AntiSpam::ip_hash(), 0, 24);
-        $n = (int) get_transient($key);
-        if ($n >= $limit) {
-            return true;
-        }
-        set_transient($key, $n + 1, HOUR_IN_SECONDS);
-        return false;
+        $prefix = $bucket === 'session' ? 'us' : 'uf';
+        return Counters::hit(Counters::hourly($prefix, AntiSpam::client_ip())) > $limit;
     }
-
     public static function session(\WP_REST_Request $req): \WP_REST_Response
     {
         if (!self::nonce_ok($req)) {
             return self::fail(403, 'Votre session a expiré. Rechargez la page.');
         }
-        if (self::throttled('session', 20)) {
+        if (self::throttled('session', 10)) {
             return self::fail(429, 'Trop de tentatives. Réessayez plus tard.');
         }
         FileRepository::purge_expired_tokens();
@@ -74,28 +69,33 @@ final class UploadController
         if (!$row) {
             return self::fail(403, 'Session d\'envoi expirée. Rechargez la page.');
         }
-        if ((int) $row['file_count'] >= self::MAX_FILES) {
-            return self::fail(422, 'Vous pouvez ajouter ' . self::MAX_FILES . ' photos au maximum.');
-        }
-        if (self::throttled('file', 60)) {
+        if (self::throttled('file', 30)) {
             return self::fail(429, 'Trop d\'envois. Réessayez plus tard.');
         }
+        // Atomic: two parallel uploads can never both take the last slot.
+        if (!FileRepository::reserve_slot($token, self::MAX_FILES)) {
+            return self::fail(422, 'Vous pouvez ajouter ' . self::MAX_FILES . ' photos au maximum.');
+        }
+        $release = static function (int $status, string $message) use ($token): \WP_REST_Response {
+            FileRepository::bump_token($token, -1);
+            return self::fail($status, $message);
+        };
 
         $files = $req->get_file_params();
         $f = $files['photo'] ?? null;
         if (!$f || ($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file((string) $f['tmp_name'])) {
             $too_big = ($f['error'] ?? 0) === UPLOAD_ERR_INI_SIZE || ($f['error'] ?? 0) === UPLOAD_ERR_FORM_SIZE;
-            return self::fail(422, $too_big ? 'Cette photo est trop volumineuse.' : 'Aucune photo reçue.');
+            return $release(422, $too_big ? 'Cette photo est trop volumineuse.' : 'Aucune photo reçue.');
         }
         $max = (int) Config::get('max_photo_mb') * 1024 * 1024;
         if ($max > 0 && (int) $f['size'] > $max) {
-            return self::fail(422, 'Cette photo dépasse ' . (int) Config::get('max_photo_mb') . ' Mo.');
+            return $release(422, 'Cette photo dépasse ' . (int) Config::get('max_photo_mb') . ' Mo.');
         }
 
         try {
             $img = ImageProcessor::process((string) $f['tmp_name']);
         } catch (\RuntimeException $e) {
-            return self::fail(422, $e->getMessage());
+            return $release(422, $e->getMessage());
         }
 
         $id = FileRepository::create([
@@ -110,9 +110,8 @@ final class UploadController
         ]);
         if (!$id) {
             ImageProcessor::delete($img['path']);
-            return self::fail(500, 'Enregistrement impossible. Réessayez.');
+            return $release(500, 'Enregistrement impossible. Réessayez.');
         }
-        FileRepository::bump_token($token, 1);
 
         return new \WP_REST_Response(['success' => true, 'id' => $id, 'width' => $img['width'], 'height' => $img['height']], 201);
     }

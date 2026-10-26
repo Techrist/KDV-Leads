@@ -42,15 +42,6 @@ if (is_readable($icons_file)) {
 <div class="kdv-app" data-kdv-form="estimation" data-home-url="<?php echo esc_url(home_url('/')); ?>">
 
   <header class="kdv-banner">
-    <a class="kdv-logo" href="<?php echo esc_url(home_url('/')); ?>">
-      <?php if (is_readable($logo_file)) : ?>
-        <img src="<?php echo esc_url(KDV_LEADS_URL . 'assets/img/logo-kdv.png'); ?>" alt="KDV Motors, achat, vente, reprise">
-      <?php else : ?>
-        <span class="kdv-logo__mark" aria-hidden="true">KD<span>V</span></span>
-        <span class="kdv-logo__tag">ACHAT - VENTE - REPRISE</span>
-        <span class="kdv-sr-only">KDV Motors</span>
-      <?php endif; ?>
-    </a>
     <div class="kdv-banner__side">
       <p class="kdv-banner__pitch">Confiez-nous votre véhicule, on s'occupe de tout !</p>
       <ul class="kdv-assurances">

@@ -35,6 +35,21 @@ final class FileRepository
         return $row ?: null;
     }
 
+    /**
+     * Reserve one photo slot for a session, atomically (no check-then-insert race): returns false when the
+     * session is full or expired. Release it with bump_token($token, -1) if the upload then fails.
+     */
+    public static function reserve_slot(string $token, int $max): bool
+    {
+        global $wpdb;
+        $t = Schema::table('upload_tokens');
+        $n = $wpdb->query($wpdb->prepare(
+            "UPDATE `$t` SET file_count = file_count + 1 WHERE token = %s AND expires_at > %s AND file_count < %d", // phpcs:ignore WordPress.DB
+            $token, gmdate('Y-m-d H:i:s'), $max
+        ));
+        return $n === 1;
+    }
+
     public static function bump_token(string $token, int $delta): void
     {
         global $wpdb;

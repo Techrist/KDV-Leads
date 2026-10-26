@@ -167,16 +167,18 @@ final class Privacy
     /** Daily cron: anonymise leads whose last activity is older than the retention period. */
     public static function retention(): void
     {
+        // Lead anonymisation follows the configured retention (0 = never anonymise automatically).
         $months = (int) Config::get('retention_months');
-        if ($months <= 0) {
-            return;
+        if ($months > 0) {
+            foreach (LeadRepository::due_for_retention($months) as $row) {
+                self::anonymize((int) $row['id']);
+            }
         }
-        foreach (LeadRepository::due_for_retention($months) as $row) {
-            self::anonymize((int) $row['id']);
-        }
-        // Mail copies carry personal data: sent messages are not kept beyond 90 days.
+        // Whatever the retention setting: mail copies carry personal data and rate-limit rows are only useful for hours.
+        // Sent messages are not kept beyond 30 days.
         global $wpdb;
+        \KdvLeads\Database\Counters::purge();
         $q = Schema::table('email_queue');
-        $wpdb->query($wpdb->prepare("DELETE FROM `$q` WHERE status = 'sent' AND sent_at < %s", gmdate('Y-m-d H:i:s', time() - 90 * DAY_IN_SECONDS))); // phpcs:ignore WordPress.DB
+        $wpdb->query($wpdb->prepare("DELETE FROM `$q` WHERE status = 'sent' AND sent_at < %s", gmdate('Y-m-d H:i:s', time() - 30 * DAY_IN_SECONDS))); // phpcs:ignore WordPress.DB
     }
 }

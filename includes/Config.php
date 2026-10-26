@@ -33,6 +33,8 @@ final class Config
             'retention_months'        => 36,          // 3 ans
             'min_fill_seconds'        => 8,
             'rate_limit_per_hour'     => 5,
+            'proxy_mode'              => '',          // '', 'cloudflare' or 'forwarded': header holding the real visitor IP
+            'ack_per_email_per_day'   => 2,           // acknowledgements sent to one address per day (anti mail-bombing)
             'turnstile_site_key'      => '',
             'turnstile_secret_key'    => '',
             'plate_api_key'           => '',          // P1, inactive tant que vide
@@ -85,6 +87,10 @@ final class Config
     /** @return mixed */
     public static function get(string $key)
     {
-        return self::all()[$key] ?? null;
+        $value = self::all()[$key] ?? null;
+        if (in_array($key, \KdvLeads\Security\Secrets::KEYS, true) && is_string($value)) {
+            return \KdvLeads\Security\Secrets::decrypt($value);
+        }
+        return $value;
     }
 }

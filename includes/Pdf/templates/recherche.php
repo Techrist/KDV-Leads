@@ -112,7 +112,7 @@ $email = (string) ($lead['email'] ?? '');
 <?php if (!empty($d['liens_annonces'])) : ?>
   <table class="info">
     <?php foreach ($d['liens_annonces'] as $url) : ?>
-      <tr><td class="v" colspan="2"><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($url); ?></a></td></tr>
+      <tr><td class="v" colspan="2"><?php echo esc_html($url); ?></td></tr>
     <?php endforeach; ?>
   </table>
 <?php else : ?>

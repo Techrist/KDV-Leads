@@ -47,12 +47,12 @@ $submit = static function (array $over, string $type = 'estimation'): array {
     $req = new WP_REST_Request('POST', '/kdv/v1/leads/' . $type);
     $req->set_header('X-WP-Nonce', wp_create_nonce('wp_rest'));
     $req->set_header('Content-Type', 'application/json');
-    $req->set_body(json_encode(array_merge($base, ['submission_key' => wp_generate_uuid4(), 'elapsed_ms' => 30000], $over)));
+    $req->set_body(json_encode(array_merge($base, ['submission_key' => wp_generate_uuid4(), 'form_token' => \KdvLeads\Http\FormToken::issue(time() - 60)], $over)));
     $res = rest_do_request($req);
     return [$res->get_status(), $res->get_data()];
 };
 $clear_limits = static function () use ($wpdb): void {
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%kdv_rl_%'");
+    $wpdb->query("DELETE FROM {$wpdb->prefix}kdv_counters WHERE name REGEXP '^(rl|ra|ft|us|uf|pl|ak)-'");
 };
 $mail_dir = WP_CONTENT_DIR . '/kdv-dev-mails';
 $mails_available = is_dir($mail_dir) && file_exists(WP_CONTENT_DIR . '/mu-plugins/kdv-dev-mail.php');
@@ -118,8 +118,12 @@ $check('invalid phone + missing consent = 422', $st === 422);
 $check('missing sale timeframe = 422', $st === 422);
 [$st] = $submit(['website' => 'http://spam']);
 $check('honeypot = 400', $st === 400);
-[$st] = $submit(['elapsed_ms' => 500]);
-$check('submitted too fast = 400', $st === 400);
+[$st] = $submit(['form_token' => \KdvLeads\Http\FormToken::issue(time() - 1)]);
+$check('submitted too fast (server-signed token) = 400', $st === 400);
+[$st] = $submit(['form_token' => '']);
+$check('missing form token = 400', $st === 400);
+[$st] = $submit(['form_token' => '1793000000.' . str_repeat('a', 32)]);
+$check('forged form token = 400', $st === 400);
 $bad = new WP_REST_Request('POST', '/kdv/v1/leads/estimation');
 $bad->set_header('X-WP-Nonce', 'bad');
 $check('bad nonce = 403', rest_do_request($bad)->get_status() === 403);
@@ -153,7 +157,7 @@ $rec = LeadRepository::search('recherche', ['per_page' => 200, 's' => 'Cayman'])
 $check('recherche lead absent from estimations', $est['total'] === 0 && $rec['total'] >= 1);
 
 echo "== 6. Private storage\n";
-$url = PrivateStorage::public_url();
+$url = in_array('--no-storage-http', $argv, true) ? null : PrivateStorage::public_url();
 if ($url) {
     $probe = PrivateStorage::path() . '/recette-probe.txt';
     file_put_contents($probe, 'x');
@@ -167,7 +171,7 @@ if ($url) {
         $check('direct URL to the PDF is refused', in_array($code, [401, 403, 404], true), "HTTP $code");
     }
 } else {
-    $skip('public access test', 'storage is outside the web root');
+    $skip('public access test', 'storage outside the web root, or --no-storage-http (non-Apache test server)');
 }
 
 echo "== 7. GDPR\n";

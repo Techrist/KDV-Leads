@@ -2,6 +2,7 @@
 namespace KdvLeads\Mail;
 
 use KdvLeads\Config;
+use KdvLeads\Database\Counters;
 use KdvLeads\Database\EmailQueueRepository;
 use KdvLeads\Database\LeadRepository;
 use KdvLeads\Storage\PrivateStorage;
@@ -67,7 +68,14 @@ final class Mailer
         ]);
 
         // Acknowledgement only when the customer gave an e-mail (it is optional).
-        if (!empty($lead['email']) && is_email($lead['email'])) {
+        // The address is not verified: cap what one address can receive per day, so the form cannot be used
+        // to mail-bomb a third party.
+        $ack_allowed = !empty($lead['email']) && is_email($lead['email'])
+            && Counters::hit(Counters::daily('ak', strtolower((string) $lead['email']))) <= max(1, (int) Config::get('ack_per_email_per_day'));
+        if (!empty($lead['email']) && !$ack_allowed) {
+            LeadRepository::log_event((int) $lead['id'], 'ack_skipped', ['reason' => 'daily limit per address']);
+        }
+        if ($ack_allowed) {
             $ids[] = EmailQueueRepository::enqueue([
                 'lead_id'   => (int) $lead['id'],
                 'kind'      => 'client_ack',

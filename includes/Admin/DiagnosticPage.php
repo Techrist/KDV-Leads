@@ -94,6 +94,25 @@ final class DiagnosticPage
             PrivateStorage::is_outside_webroot() ? 'oui' : 'non : protégé par .htaccess uniquement (définir KDV_STORAGE_PATH)');
         $add('Accès public au stockage', ...self::public_access_check($ready));
 
+        // Web server: the .htaccess protection only exists on Apache (and compatible servers).
+        $software = isset($_SERVER['SERVER_SOFTWARE']) ? (string) $_SERVER['SERVER_SOFTWARE'] : 'inconnu';
+        $apache_like = (bool) preg_match('/apache|litespeed/i', $software);
+        $outside = PrivateStorage::is_outside_webroot();
+        $add('Serveur web', ($apache_like || $outside) ? 'ok' : 'warn',
+            $software . ($apache_like || $outside ? '' : ' : les fichiers .htaccess sont ignorés, définir KDV_STORAGE_PATH hors de la racine web'));
+
+        // Anti-abuse: which IP the limiter sees, and whether the bot check is on.
+        $ip = \KdvLeads\Http\AntiSpam::client_ip();
+        $private = !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        $mode = (string) \KdvLeads\Config::get('proxy_mode');
+        $add('Adresse IP vue par le serveur', ($private && $mode === '') ? 'warn' : 'ok',
+            $ip . ($private && $mode === '' ? ' (adresse privée : si le site est derrière un proxy ou un CDN, régler « Anti-spam » dans les Réglages, sinon la limite par IP s\'appliquerait à tous les visiteurs)' : '')
+            . ($mode !== '' ? ' [lue dans ' . ($mode === 'cloudflare' ? 'CF-Connecting-IP' : 'X-Forwarded-For') . ']' : ''));
+        $turnstile = (string) \KdvLeads\Config::get('turnstile_secret_key') !== '' && (string) \KdvLeads\Config::get('turnstile_site_key') !== '';
+        $add('Anti-robot (Cloudflare Turnstile)', $turnstile ? 'ok' : 'warn', $turnstile ? 'actif' : 'non configuré : recommandé en production (Réglages → Anti-spam)');
+        $add('Mémoire PHP pour les photos', (function_exists('wp_convert_hr_to_bytes') && (int) wp_convert_hr_to_bytes((string) ini_get('memory_limit')) >= 256 * MB_IN_BYTES) || (int) ini_get('memory_limit') === -1 ? 'ok' : 'warn',
+            (string) ini_get('memory_limit') . ' (les photos trop lourdes pour la mémoire disponible sont refusées proprement)');
+
         // Cron.
         $add('WP-Cron', defined('DISABLE_WP_CRON') && DISABLE_WP_CRON ? 'ok' : 'warn',
             defined('DISABLE_WP_CRON') && DISABLE_WP_CRON ? 'désactivé (cron système attendu)' : 'actif : recommander un cron système toutes les 5 min');

@@ -9,7 +9,7 @@ final class SettingsPage
 {
     private const GROUP = 'kdv_settings_group';
 
-    /** field key => [label, type, help] */
+    /** field key => [label, type, help, options (select only)] */
     private static function fields(): array
     {
         return [
@@ -32,6 +32,8 @@ final class SettingsPage
             'Anti-spam' => [
                 'min_fill_seconds'     => ['Délai minimum de remplissage (s)', 'number', ''],
                 'rate_limit_per_hour'  => ['Soumissions max. par IP et par heure', 'number', ''],
+                'ack_per_email_per_day' => ['Accusés de réception max. par adresse et par jour', 'number', 'Protège un tiers contre l\'envoi répété d\'accusés (adresse non vérifiée).'],
+                'proxy_mode'           => ['Le site est derrière un proxy ou un CDN', 'select', 'À régler seulement si le site est réellement derrière ce service : sinon, n\'importe qui pourrait falsifier son adresse IP. Sans réglage, la limite par IP s\'applique à l\'adresse vue par le serveur.', ['' => 'Non (adresse vue par le serveur)', 'cloudflare' => 'Cloudflare (en-tête CF-Connecting-IP)', 'forwarded' => 'Autre proxy (dernière adresse de X-Forwarded-For)']],
                 'turnstile_site_key'   => ['Cloudflare Turnstile : clé de site', 'text', 'Laisser vide pour désactiver.'],
                 'turnstile_secret_key' => ['Cloudflare Turnstile : clé secrète', 'password', ''],
             ],
@@ -63,14 +65,19 @@ final class SettingsPage
         $out = $current;
 
         foreach (self::fields() as $group) {
-            foreach ($group as $key => [$label, $type]) {
+            foreach ($group as $key => $def) {
+                [$label, $type] = $def;
                 $raw = $input[$key] ?? null;
                 switch ($type) {
                     case 'checkbox':
                         $out[$key] = empty($raw) ? 0 : 1;
                         break;
                     case 'number':
-                        $out[$key] = max(0, (int) $raw);
+                        $bounds = ['min_fill_seconds' => [0, 600], 'rate_limit_per_hour' => [0, 1000], 'ack_per_email_per_day' => [1, 20], 'retention_months' => [0, 120], 'pdf_max_mb' => [1, 25], 'max_photo_mb' => [1, 20]][$key] ?? [0, 1000000];
+                        $out[$key] = min($bounds[1], max($bounds[0], (int) $raw));
+                        break;
+                    case 'select':
+                        $out[$key] = array_key_exists((string) $raw, $def[3] ?? []) ? (string) $raw : '';
                         break;
                     case 'email':
                         $out[$key] = sanitize_email((string) $raw);
@@ -81,7 +88,7 @@ final class SettingsPage
                     case 'password':
                         // Empty = keep the stored secret (the field is never pre-filled).
                         if ($raw !== null && $raw !== '') {
-                            $out[$key] = sanitize_text_field((string) $raw);
+                            $out[$key] = \KdvLeads\Security\Secrets::encrypt(sanitize_text_field((string) $raw));   // stored encrypted
                         }
                         break;
                     default:
@@ -115,11 +122,18 @@ final class SettingsPage
 
         foreach (self::fields() as $title => $group) {
             echo '<h2>' . esc_html($title) . '</h2><table class="form-table" role="presentation">';
-            foreach ($group as $key => [$label, $type, $help]) {
+            foreach ($group as $key => $def) {
+                [$label, $type, $help] = $def;
                 $name = Config::OPTION . '[' . $key . ']';
                 $val = $s[$key] ?? '';
                 echo '<tr><th scope="row"><label for="kdv-' . esc_attr($key) . '">' . esc_html($label) . '</label></th><td>';
-                if ($type === 'checkbox') {
+                if ($type === 'select') {
+                    echo '<select id="kdv-' . esc_attr($key) . '" name="' . esc_attr($name) . '">';
+                    foreach (($def[3] ?? []) as $ov => $ol) {
+                        printf('<option value="%s"%s>%s</option>', esc_attr((string) $ov), selected((string) $val, (string) $ov, false), esc_html($ol));
+                    }
+                    echo '</select>';
+                } elseif ($type === 'checkbox') {
                     printf('<input type="checkbox" id="kdv-%s" name="%s" value="1" %s>', esc_attr($key), esc_attr($name), checked(!empty($val), true, false));
                 } else {
                     printf('<input class="regular-text" type="%s" id="kdv-%s" name="%s" value="%s" %s>',
